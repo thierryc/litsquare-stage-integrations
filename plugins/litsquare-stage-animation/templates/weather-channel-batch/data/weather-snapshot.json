@@ -1,0 +1,25 @@
+{
+  "source": "sample-weather-api",
+  "snapshotAt": "2026-06-03T12:00:00Z",
+  "region": "Northeast",
+  "cities": [
+    {
+      "name": "New York",
+      "tempF": 74,
+      "condition": "Partly cloudy",
+      "windMph": 9
+    },
+    {
+      "name": "Boston",
+      "tempF": 68,
+      "condition": "Light rain",
+      "windMph": 12
+    },
+    {
+      "name": "Philadelphia",
+      "tempF": 78,
+      "condition": "Sunny",
+      "windMph": 7
+    }
+  ]
+}

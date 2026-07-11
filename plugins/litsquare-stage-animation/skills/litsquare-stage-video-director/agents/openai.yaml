@@ -1,0 +1,6 @@
+interface:
+  display_name: "LitSquare Stage Video Director"
+  short_description: "Route LitSquare Stage video work to the right creation, render, and review skills"
+  default_prompt: "Create, render, or review a LitSquare Stage video using the correct workflow."
+policy:
+  allow_implicit_invocation: true

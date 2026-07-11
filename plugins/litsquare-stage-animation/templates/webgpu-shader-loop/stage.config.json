@@ -1,0 +1,27 @@
+{
+  "name": "WebGPU Shader Loop",
+  "sourceEntry": "index.html",
+  "buildDir": "dist",
+  "preview": {
+    "fps": 30,
+    "width": 1280,
+    "height": 720,
+    "durationFrames": 120,
+    "loop": true
+  },
+  "render": {
+    "width": 1920,
+    "height": 1080,
+    "fps": 30,
+    "audioEnabled": false,
+    "videoOutput": "h264Mp4",
+    "videoMode": "deterministic",
+    "motionBlur": {
+      "enabled": false,
+      "shutterAngle": 180,
+      "sampleCount": 1
+    },
+    "snapshotWaitMs": 0,
+    "maxWorkerCount": 2
+  }
+}

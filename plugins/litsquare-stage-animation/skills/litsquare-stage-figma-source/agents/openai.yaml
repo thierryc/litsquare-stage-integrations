@@ -1,0 +1,6 @@
+interface:
+  display_name: "LitSquare Stage Figma Source"
+  short_description: "Convert Figma or visual design input into local LitSquare Stage video code"
+  default_prompt: "Turn this Figma frame into a local LitSquare Stage animation project."
+policy:
+  allow_implicit_invocation: true

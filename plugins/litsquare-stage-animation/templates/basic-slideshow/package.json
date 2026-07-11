@@ -1,0 +1,16 @@
+{
+  "name": "litsquare-stage-template-basic-slideshow",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite --host 127.0.0.1"
+  },
+  "dependencies": {
+    "@litsquare/stage": "file:../../../../../litsquare-stage/packages/stage"
+  },
+  "devDependencies": {
+    "vite": "^6.3.5",
+    "typescript": "^5.9.0"
+  }
+}

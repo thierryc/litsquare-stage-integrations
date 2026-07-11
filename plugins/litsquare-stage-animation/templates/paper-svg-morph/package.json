@@ -1,0 +1,17 @@
+{
+  "name": "litsquare-stage-template-paper-svg-morph",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite --host 127.0.0.1"
+  },
+  "dependencies": {
+    "@litsquare/stage": "file:../../../../../litsquare-stage/packages/stage",
+    "paper": "^0.12.17"
+  },
+  "devDependencies": {
+    "vite": "^6.3.5",
+    "typescript": "^5.9.0"
+  }
+}

@@ -1,0 +1,6 @@
+interface:
+  display_name: "LitSquare Stage Init Project"
+  short_description: "Initialize a runnable LitSquare Stage video project with responsive stage and runner"
+  default_prompt: "Initialize a LitSquare Stage video project with frame-derived motion and render-safe defaults."
+policy:
+  allow_implicit_invocation: true

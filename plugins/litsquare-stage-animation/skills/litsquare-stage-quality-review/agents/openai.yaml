@@ -1,0 +1,6 @@
+interface:
+  display_name: "LitSquare Stage Quality Review"
+  short_description: "Review LitSquare Stage frames and artifacts for final visual and technical acceptance"
+  default_prompt: "Review this LitSquare Stage render for quality, responsive fit, and artifact correctness."
+policy:
+  allow_implicit_invocation: true

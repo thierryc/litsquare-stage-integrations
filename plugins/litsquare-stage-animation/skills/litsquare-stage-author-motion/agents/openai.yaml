@@ -1,0 +1,6 @@
+interface:
+  display_name: "LitSquare Stage Author Motion"
+  short_description: "Author deterministic CSS, JS, SVG, Canvas, WebGL, Three.js, or WebGPU motion"
+  default_prompt: "Add frame-derived motion to this LitSquare Stage project."
+policy:
+  allow_implicit_invocation: true

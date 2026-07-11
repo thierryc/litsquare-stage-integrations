@@ -1,0 +1,40 @@
+{
+  "name": "litsquare-stage-animation",
+  "version": "0.9.0",
+  "description": "Create, refine, and render code-first LitSquare Stage animations through the macOS companion app.",
+  "author": {
+    "name": "Thierry Charbonnel"
+  },
+  "license": "MIT",
+  "keywords": [
+    "litsquare-stage",
+    "animation",
+    "motion",
+    "rendering",
+    "video",
+    "mcp",
+    "threejs",
+    "webgpu",
+    "figma",
+    "data-video"
+  ],
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "LitSquare Stage Animation",
+    "shortDescription": "Create responsive LitSquare Stage videos through the macOS app.",
+    "longDescription": "LitSquare Stage Animation helps agents plan code-first motion pieces, create responsive LitSquare Stage projects, adapt them across social, broadcast, cinema, and 8K formats, and render stills, image sequences, or H.264 video through the LitSquare Stage macOS app. The macOS app is mandatory in this version.",
+    "developerName": "LitSquare",
+    "category": "Productivity",
+    "capabilities": [
+      "Write",
+      "Interactive"
+    ],
+    "defaultPrompt": [
+      "Create a responsive LitSquare Stage animation.",
+      "Render this LitSquare Stage project to 4K MP4.",
+      "Turn data or Figma input into a video."
+    ],
+    "brandColor": "#2563EB"
+  }
+}

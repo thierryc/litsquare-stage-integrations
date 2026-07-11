@@ -1,0 +1,27 @@
+{
+  "name": "Responsive Format Pack",
+  "sourceEntry": "index.html",
+  "buildDir": "dist",
+  "preview": {
+    "fps": 30,
+    "width": 1920,
+    "height": 1080,
+    "durationFrames": 180,
+    "loop": true
+  },
+  "render": {
+    "width": 3840,
+    "height": 2160,
+    "fps": 30,
+    "audioEnabled": false,
+    "videoOutput": "h264Mp4",
+    "videoMode": "deterministic",
+    "motionBlur": {
+      "enabled": true,
+      "shutterAngle": 180,
+      "sampleCount": 4
+    },
+    "snapshotWaitMs": 0,
+    "maxWorkerCount": 4
+  }
+}

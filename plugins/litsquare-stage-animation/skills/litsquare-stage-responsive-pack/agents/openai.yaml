@@ -1,0 +1,6 @@
+interface:
+  display_name: "LitSquare Stage Responsive Pack"
+  short_description: "Adapt one LitSquare Stage animation across social, HD, cinema, 4K, and 8K formats"
+  default_prompt: "Make this LitSquare Stage animation responsive across a render format pack."
+policy:
+  allow_implicit_invocation: true

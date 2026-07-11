@@ -1,0 +1,27 @@
+{
+  "name": "Variable Font Title",
+  "sourceEntry": "index.html",
+  "buildDir": "dist",
+  "preview": {
+    "fps": 60,
+    "width": 1920,
+    "height": 1080,
+    "durationFrames": 240,
+    "loop": true
+  },
+  "render": {
+    "width": 3840,
+    "height": 2160,
+    "fps": 60,
+    "audioEnabled": false,
+    "videoOutput": "h264Mp4",
+    "videoMode": "deterministic",
+    "motionBlur": {
+      "enabled": true,
+      "shutterAngle": 180,
+      "sampleCount": 8
+    },
+    "snapshotWaitMs": 0,
+    "maxWorkerCount": 4
+  }
+}

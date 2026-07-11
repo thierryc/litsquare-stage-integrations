@@ -1,0 +1,20 @@
+{
+  "name": "litsquare-stage",
+  "interface": {
+    "displayName": "LitSquare Stage"
+  },
+  "plugins": [
+    {
+      "name": "litsquare-stage-animation",
+      "source": {
+        "source": "local",
+        "path": "./plugins/litsquare-stage-animation"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

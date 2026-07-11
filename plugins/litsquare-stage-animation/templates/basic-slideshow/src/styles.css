@@ -1,0 +1,61 @@
+html,
+body,
+#stage {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  overflow: hidden;
+  background: #101114;
+  color: #fffaf0;
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+}
+
+.slide {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at calc(20% + var(--accent-x) * 40%) 25%, rgba(250, 204, 21, 0.24), transparent 28%),
+    linear-gradient(135deg, #101114, #1d2430);
+}
+
+.slide__index {
+  position: absolute;
+  top: 7vmin;
+  left: 7vmin;
+  font-size: clamp(18px, 2vmin, 32px);
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #fde68a;
+}
+
+.slide__title {
+  position: absolute;
+  left: 7vmin;
+  right: 7vmin;
+  bottom: 22vmin;
+  margin: 0;
+  max-width: 14ch;
+  font-size: clamp(58px, 10vw, 180px);
+  line-height: 0.88;
+  transform: translateY(calc((1 - var(--local-progress)) * 42px));
+  opacity: var(--fade);
+}
+
+.slide__caption {
+  position: absolute;
+  left: 7vmin;
+  right: 7vmin;
+  bottom: 8vmin;
+  margin: 0;
+  max-width: 58ch;
+  color: rgba(255, 250, 240, 0.78);
+  font-size: clamp(20px, 2.4vw, 42px);
+  line-height: 1.2;
+  opacity: var(--fade);
+}

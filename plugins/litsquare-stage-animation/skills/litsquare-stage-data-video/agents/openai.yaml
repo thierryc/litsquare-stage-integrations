@@ -1,0 +1,6 @@
+interface:
+  display_name: "LitSquare Stage Data Video"
+  short_description: "Create deterministic LitSquare Stage video batches from API, CSV, or JSON snapshots"
+  default_prompt: "Generate data-driven LitSquare Stage video variants from this structured input."
+policy:
+  allow_implicit_invocation: true

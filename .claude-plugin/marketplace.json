@@ -1,0 +1,17 @@
+{
+  "name": "litsquare-stage",
+  "description": "Shared LitSquare Stage animation and rendering integrations for Codex and Claude Code.",
+  "owner": {
+    "name": "Thierry Charbonnel"
+  },
+  "plugins": [
+    {
+      "name": "litsquare-stage-animation",
+      "source": "./plugins/litsquare-stage-animation",
+      "description": "Create, refine, and render code-first LitSquare Stage animations through the macOS companion app.",
+      "version": "0.9.0",
+      "category": "development",
+      "tags": ["animation", "rendering", "video", "mcp", "macos"]
+    }
+  ]
+}
