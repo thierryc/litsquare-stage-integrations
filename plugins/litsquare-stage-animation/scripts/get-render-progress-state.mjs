@@ -3,7 +3,7 @@
 const DEFAULT_HEALTH_URL = "http://127.0.0.1:7460/healthz";
 const DEFAULT_MCP_URL = "http://127.0.0.1:7460/mcp";
 const MANDATORY_MESSAGE =
-  "LitSquare Stage rendering requires the LitSquare Stage macOS app in this plugin version. Install the app and retry. A headless Chromium service path is planned but not enabled yet.";
+  "The LitSquare Stage native render service is not reachable. Launch or restart the macOS app and retry.";
 
 const args = parseArgs(process.argv.slice(2));
 const mcpURL = String(args.mcpUrl ?? process.env.STAGE_MCP_URL ?? DEFAULT_MCP_URL);
