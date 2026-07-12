@@ -1,6 +1,6 @@
 interface:
   display_name: "LitSquare Stage Render Video"
-  short_description: "Render LitSquare Stage stills, sequences, and videos through the mandatory macOS app"
-  default_prompt: "Render this LitSquare Stage project to video through the LitSquare Stage app."
+  short_description: "Natively render and encode video in LitSquare Stage"
+  default_prompt: "Use $litsquare-stage-render-video to render and natively encode this video in the LitSquare Stage app."
 policy:
   allow_implicit_invocation: true

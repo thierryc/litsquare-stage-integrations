@@ -88,3 +88,16 @@ test("render skill makes direct MCP readiness authoritative", async () => {
   assert.match(skill, /Do not run the shell preflight when the canonical MCP tools are available/);
   assert.match(skill, /Do not tell the user to restart the app based only on that shell failure/);
 });
+
+
+test("render skill requires native final video encoding", async () => {
+  const skillPath = fileURLToPath(new URL(
+    "../plugins/litsquare-stage-animation/skills/litsquare-stage-render-video/SKILL.md",
+    import.meta.url
+  ));
+  const skill = await readFile(skillPath, "utf8");
+  assert.match(skill, /Native Final Video Encoding/);
+  assert.match(skill, /Never create a final video by rendering a PNG sequence and passing it to FFmpeg/);
+  assert.match(skill, /one native LitSquare Stage video render job per target size/);
+  assert.match(skill, /Do not call the sequence tool as an intermediate video-encoding step/);
+});

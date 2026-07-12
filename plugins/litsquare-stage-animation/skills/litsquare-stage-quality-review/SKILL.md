@@ -20,6 +20,8 @@ Read `references/qa-checklist.md`, then verify:
 - Audio is present only when requested.
 - 4K/8K renders use adequate asset resolution.
 - The final artifact exists and is non-empty.
+- Every final MP4/MOV artifact was encoded and muxed by the LitSquare Stage app’s video render job, not assembled from frames or transcoded with FFmpeg.
+- Responsive packs contain one native app video artifact per requested format; no format is derived by external transcoding.
 - Responsive packs have representative stills for every requested format.
 
 ## Output

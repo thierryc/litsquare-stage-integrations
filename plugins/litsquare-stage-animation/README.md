@@ -54,6 +54,8 @@ node scripts/make-render-progress-preview-url.mjs --state /tmp/stage-progress.js
 
 The HTML asset does not render inside a conversation by itself. Both clients use the LitSquare Stage app JSON-RPC MCP tools: `litsquare_stage_start_video_render`, `litsquare_stage_start_sequence_render`, and `litsquare_stage_render_progress`. Codex can additionally mount `ui://widget/litsquare-stage-render-progress.html` through its widget metadata; Claude Code consumes the same structured tool results without depending on that widget host.
 
+Final MP4/MOV deliverables must come directly from `litsquare_stage_start_video_render`. The app owns H.264 encoding, container creation, audio muxing, metadata, and per-format output; PNG sequences and FFmpeg are not a video fallback.
+
 ## Smoke Test
 
 From the repository root, with the LitSquare Stage macOS app running on `http://127.0.0.1:7460`, render the local anotherplanet smoke stage:

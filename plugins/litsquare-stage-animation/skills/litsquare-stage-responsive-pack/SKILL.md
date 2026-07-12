@@ -15,6 +15,8 @@ Use when one animation must render cleanly across more than one size or aspect r
 4. Choose a strategy per scene: reflow, crop, letterbox, pillarbox, or alternate layout.
 5. Drive CSS variables from `renderFrame`; do not rely on viewport-only CSS for render-critical placement.
 6. Capture representative stills for each format before full renders.
+7. Render every final video format as its own `litsquare_stage_start_video_render` job through the LitSquare Stage app.
+8. Never create social variants by passing a PNG sequence or master video to FFmpeg or another external encoder. Put each target’s dimensions, fps, motion blur, codec/container, and output path in the native render request.
 
 ## Default Pack
 

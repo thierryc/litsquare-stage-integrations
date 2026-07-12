@@ -21,6 +21,9 @@
 ## Video Checks
 
 - Artifact exists and is non-empty.
+- Artifact is the MP4/MOV returned by a terminal LitSquare Stage video render job.
+- No FFmpeg or external encoder created, transcoded, scaled, padded, muxed, or rewrote the final video.
+- Every requested social format has its own native LitSquare Stage video job and artifact.
 - Duration equals `(endFrame - startFrame + 1) / fps`.
 - FPS matches config.
 - Motion blur looks intentional and does not smear UI text excessively.

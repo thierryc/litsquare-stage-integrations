@@ -110,6 +110,12 @@ Failures use:
 - `bring_render_window_front`, `send_render_window_back`, `hide_render_window`, `show_render_window`: manage the app render window when available.
 - `set_render_window_state`: consolidated REST-shell alias for visibility, compact mode, floating mode, and position.
 
+## Native Video Authority
+
+`render_video` and `litsquare_stage_start_video_render` own the complete final-video pipeline: frame rendering, motion-blur sampling, audio rendering, H.264 encoding, MP4/MOV container creation, muxing, and metadata. A final video must be the artifact returned by the LitSquare Stage app.
+
+Do not render a sequence and invoke FFmpeg, a browser recorder, an AVFoundation helper, or another external encoder. Do not transcode a native app artifact to derive social variants. Submit a distinct native video job for every requested target. If the requested codec or container is unsupported, report the limitation instead of silently changing the pipeline.
+
 ## Request Shapes
 
 ```json
