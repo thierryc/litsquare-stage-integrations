@@ -293,5 +293,5 @@ function printUsage() {
   node scripts/get-render-progress-state.mjs
   node scripts/get-render-progress-state.mjs --project /absolute/project --job-id <jobID>
 
-Outputs JSON matching apps/render-progress/sample-state.json. The LitSquare Stage macOS app is mandatory.`);
+Outputs the live render-progress state used by the app-served compact widget. The LitSquare Stage macOS app is mandatory.`);
 }

@@ -101,3 +101,27 @@ test("render skill requires native final video encoding", async () => {
   assert.match(skill, /one native LitSquare Stage video render job per target size/);
   assert.match(skill, /Do not call the sequence tool as an intermediate video-encoding step/);
 });
+
+test("preflight requires the compact v2 widget contract", async () => {
+  const scriptPath = fileURLToPath(new URL(
+    "../plugins/litsquare-stage-animation/scripts/check-stage-app.mjs",
+    import.meta.url
+  ));
+  const script = await readFile(scriptPath, "utf8");
+  assert.match(script, /litsquare-stage-render-progress-v2\.html/);
+  assert.match(script, /progressMeta\.ui\?\.resourceUri/);
+  assert.match(script, /openai\/widgetPrefersBorder/);
+  assert.match(script, /notifyIntrinsicHeight/);
+});
+
+test("preview helper fetches the canonical widget from the app", async () => {
+  const scriptPath = fileURLToPath(new URL(
+    "../plugins/litsquare-stage-animation/scripts/make-render-progress-preview-url.mjs",
+    import.meta.url
+  ));
+  const script = await readFile(scriptPath, "utf8");
+  assert.match(script, /"resources\/read"/);
+  assert.match(script, /litsquare-stage-render-progress-v2\.html/);
+  assert.match(script, /LitSquare Stage macOS app MCP resource/);
+  assert.doesNotMatch(script, /assets\/render-progress-widget/);
+});

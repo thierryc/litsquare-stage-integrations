@@ -26,33 +26,15 @@ The plugin includes one shared `.mcp.json` for the local LitSquare Stage macOS a
 
 Use the canonical MCP progress tool as the primary readiness check. Use `scripts/check-stage-app.mjs` only in clients where the plugin MCP tools are unavailable and localhost access is permitted. Use `scripts/init-stage-project.mjs` to copy and normalize templates, `scripts/validate-stage-project.mjs` to check the minimum project contract, `scripts/render-stage-project.mjs` only for CLI fallback renders, and `scripts/get-render-progress-state.mjs` to adapt app job state into the progress-widget state model.
 
-The plugin also includes a render-progress UI template for the app-served MCP widget:
+The render-progress UI is owned and served by the LitSquare Stage macOS app at `ui://widget/litsquare-stage-render-progress-v2.html`; the plugin does not ship a duplicate HTML implementation. Both clients use the canonical JSON-RPC MCP tools: `litsquare_stage_start_video_render`, `litsquare_stage_start_sequence_render`, and `litsquare_stage_render_progress`. Codex can mount the compact app-served resource through standard `_meta.ui.resourceUri` and the `openai/outputTemplate` compatibility alias; Claude Code consumes the same structured state without depending on the widget host.
 
-```text
-apps/render-progress/
-assets/render-progress-widget.html
-```
-
-The source template accepts render job state by embedded JSON, query state, `postMessage`, or direct calls to `window["litsquare-stage-render-progress"].render(state)`. Rebuild the single-file widget asset after edits:
-
-```bash
-node scripts/build-render-progress-widget.mjs
-```
-
-Preview the bundled widget locally with sample state:
+Preview the canonical resource and current app state locally:
 
 ```bash
 node scripts/make-render-progress-preview-url.mjs
 ```
 
-Open the returned `url` in a browser. For live app state, first write a widget-compatible JSON snapshot:
-
-```bash
-node scripts/get-render-progress-state.mjs --project /absolute/project > /tmp/stage-progress.json
-node scripts/make-render-progress-preview-url.mjs --state /tmp/stage-progress.json
-```
-
-The HTML asset does not render inside a conversation by itself. Both clients use the LitSquare Stage app JSON-RPC MCP tools: `litsquare_stage_start_video_render`, `litsquare_stage_start_sequence_render`, and `litsquare_stage_render_progress`. Codex can additionally mount `ui://widget/litsquare-stage-render-progress.html` through its widget metadata; Claude Code consumes the same structured tool results without depending on that widget host.
+For a specific job or saved state, pass `--job-id JOB_ID` or `--state /tmp/stage-progress.json`.
 
 Final MP4/MOV deliverables must come directly from `litsquare_stage_start_video_render`. The app owns H.264 encoding, container creation, audio muxing, metadata, and per-format output; PNG sequences and FFmpeg are not a video fallback.
 

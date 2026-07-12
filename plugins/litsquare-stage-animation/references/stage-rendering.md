@@ -41,8 +41,8 @@ JSON-RPC MCP window feedback tool:
 
 Progress UI:
 
-- Source template: `apps/render-progress/`
-- Bundled widget: `assets/render-progress-widget.html`
+- Canonical widget: app-served `ui://widget/litsquare-stage-render-progress-v2.html`
+- Widget source: macOS app `Sources/LitSquareStageRenderKit/Resources/RenderProgressWidget.html`
 - State contract: `references/render-progress-ui.md`
 - Claude Code activation and reload behavior: `references/claude-code-integration.md`
 
@@ -103,4 +103,3 @@ When the MCP window feedback tool is available, use the native app window to sho
 - `scripts/check-stage-app.mjs`: fallback JSON readiness check for clients without direct MCP tools; requires permitted localhost access.
 - `scripts/render-stage-project.mjs`: JSON render client for frame, sequence, and video jobs.
 - `scripts/get-render-progress-state.mjs`: adapts app render status into progress-widget JSON.
-- `scripts/build-render-progress-widget.mjs`: rebuilds the single-file progress widget asset.

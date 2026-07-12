@@ -7,7 +7,7 @@ import { pathToFileURL } from "node:url";
 const DEFAULT_HEALTH_URL = "http://127.0.0.1:7460/healthz";
 const DEFAULT_MCP_URL = "http://127.0.0.1:7460/mcp";
 const REQUIRED_MCP_PROTOCOL_VERSION = "2025-06-18";
-const PROGRESS_TEMPLATE_URI = "ui://widget/litsquare-stage-render-progress.html";
+const PROGRESS_TEMPLATE_URI = "ui://widget/litsquare-stage-render-progress-v2.html";
 const PROGRESS_MIME_TYPE = "text/html+skybridge";
 const WIDGET_TOOL_NAMES = [
   "litsquare_stage_start_video_render",
@@ -220,21 +220,31 @@ async function probeWidgetBridge(url, timeoutMs) {
     const progressTool = tools.find((tool) => tool?.name === "litsquare_stage_render_progress");
     const progressMeta = progressTool?._meta ?? {};
     const hasOutputTemplate = progressMeta["openai/outputTemplate"] === PROGRESS_TEMPLATE_URI;
+    const hasStandardResourceURI = progressMeta.ui?.resourceUri === PROGRESS_TEMPLATE_URI;
     const widgetAccessible = progressMeta["openai/widgetAccessible"] === true;
     const resourceContents = Array.isArray(resourceRead?.result?.contents) ? resourceRead.result.contents : [];
     const widgetResource = resourceContents.find((content) => content?.uri === PROGRESS_TEMPLATE_URI);
+    const resourceMeta = widgetResource?._meta ?? {};
+    const hasCompactResourceMeta =
+      resourceMeta.ui?.prefersBorder === false &&
+      resourceMeta["openai/widgetPrefersBorder"] === false &&
+      typeof resourceMeta["openai/widgetDescription"] === "string";
     const resourceReady =
       widgetResource?.mimeType === PROGRESS_MIME_TYPE &&
       typeof widgetResource?.text === "string" &&
       widgetResource.text.includes("window.openai") &&
-      widgetResource.text.includes("litsquare_stage_render_progress");
+      widgetResource.text.includes("litsquare_stage_render_progress") &&
+      widgetResource.text.includes("notifyIntrinsicHeight") &&
+      !widgetResource.text.includes("preview-strip");
 
     return {
       ok: Boolean(
         initialize?.result?.protocolVersion === REQUIRED_MCP_PROTOCOL_VERSION &&
         missingTools.length === 0 &&
         hasOutputTemplate &&
+        hasStandardResourceURI &&
         widgetAccessible &&
+        hasCompactResourceMeta &&
         resourceReady
       ),
       url,
@@ -244,7 +254,9 @@ async function probeWidgetBridge(url, timeoutMs) {
       missingTools,
       progressToolMeta: progressMeta,
       hasOutputTemplate,
+      hasStandardResourceURI,
       widgetAccessible,
+      hasCompactResourceMeta,
       resource: {
         uri: widgetResource?.uri ?? null,
         mimeType: widgetResource?.mimeType ?? null,

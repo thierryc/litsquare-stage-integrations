@@ -43,7 +43,7 @@ Window feedback tool:
 The render progress widget resource is:
 
 ```text
-ui://widget/litsquare-stage-render-progress.html
+ui://widget/litsquare-stage-render-progress-v2.html
 ```
 
 Its MIME type is:
@@ -57,13 +57,16 @@ Tool descriptors and tool results that should render inline in Codex must includ
 ```json
 {
   "_meta": {
-    "openai/outputTemplate": "ui://widget/litsquare-stage-render-progress.html",
+    "ui": {
+      "resourceUri": "ui://widget/litsquare-stage-render-progress-v2.html"
+    },
+    "openai/outputTemplate": "ui://widget/litsquare-stage-render-progress-v2.html",
     "openai/widgetAccessible": true
   }
 }
 ```
 
-Progress tool results must return `structuredContent` with at least `projectName`, `status`, `summary`, `jobID`, `frame`, `totalFrames`, `progress`, `remainingSeconds`, `kind`, `outputFormat`, `fps`, `width`, `height`, `motionBlur`, `artifacts`, `events`, `diagnostics`, and `updatedAt`. Preview pixels, when included, must be a bounded reduced PNG data URL at `preview.dataURL`.
+Progress tool results must return `structuredContent` with at least `projectName`, `status`, `summary`, `jobID`, `frame`, `completedFrames`, `totalFrames`, `progress`, `remainingSeconds`, `kind`, `outputFormat`, `fps`, `width`, `height`, `motionBlur`, `artifacts`, `events`, `diagnostics`, and `updatedAt`. Preview pixels, when included, must be a bounded reduced PNG data URL at `preview.dataURL`.
 
 ## REST Shell Envelope
 
@@ -170,20 +173,17 @@ On failure, inspect `get_project_status` before changing code. Useful sources ar
 
 ## Progress UI
 
-The plugin ships a display-only render progress widget:
+The macOS app owns and serves the display-only compact render progress widget. The plugin keeps only the state contract and app-backed preview helper; it does not ship duplicate HTML, CSS, or JavaScript.
 
-- Source: `apps/render-progress/`
-- Bundled HTML: `assets/render-progress-widget.html`
-- State contract: `references/render-progress-ui.md`
-
-The app should feed the widget with render job snapshots and `/mcp/events` updates using `window.postMessage({ type: "litsquare-stage-render-progress", state })` or an equivalent host render call. Keep queue controls in MCP tools for this version.
+The app feeds the widget with render snapshots through MCP Apps `ui/notifications/tool-result`, `openai:set_globals`, or widget-initiated `litsquare_stage_render_progress` polling. Queue controls remain in MCP tools.
 
 To render the widget inside a Codex conversation, use the JSON-RPC UI-bearing tool bridge:
 
-- Register or serve `assets/render-progress-widget.html` as a widget resource such as `ui://widget/litsquare-stage-render-progress.html`.
-- Add display/start tools such as `litsquare_stage_start_video_render`, `litsquare_stage_start_sequence_render`, and `litsquare_stage_render_progress`.
-- Return render progress as `structuredContent`.
-- Include `_meta["openai/outputTemplate"]` pointing to the widget resource in the tool descriptor/result metadata.
-- Send preview pixels only as reduced base64 PNG data URLs in `structuredContent.preview.dataURL`; do not expose raw thumbnail paths and do not send full-size cached thumbnails.
+- Serve the app resource at `ui://widget/litsquare-stage-render-progress-v2.html`.
+- Return render progress as `structuredContent`, including human-readable `completedFrames`.
+- Add standard `_meta.ui.resourceUri` and mirror it with `_meta["openai/outputTemplate"]`.
+- Set resource metadata `_meta.ui.prefersBorder: false`, `openai/widgetPrefersBorder: false`, and `openai/widgetDescription`.
+- Send preview pixels only as reduced base64 PNG data URLs in `structuredContent.preview.dataURL`; do not expose raw thumbnail paths or full-size cached thumbnails.
+- Report intrinsic height after state, preview, and detail changes so the host does not clip the card.
 
-The plugin asset only packages the UI source. It does not, by itself, cause Codex to display the HTML in a message; the LitSquare Stage app MCP endpoint must expose the widget resource and the agent must call the JSON-RPC widget tools through the MCP connector rather than raw REST shell calls.
+The agent must call the JSON-RPC widget tools through the MCP connection rather than raw REST shell calls.

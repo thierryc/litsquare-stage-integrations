@@ -14,8 +14,6 @@ plugins/litsquare-stage-animation/skills/
 plugins/litsquare-stage-animation/prompts/
 plugins/litsquare-stage-animation/references/
 plugins/litsquare-stage-animation/scripts/
-plugins/litsquare-stage-animation/apps/render-progress/   # widget source, not a ChatGPT app registration
-plugins/litsquare-stage-animation/assets/
 plugins/litsquare-stage-animation/templates/
 ```
 
@@ -59,15 +57,13 @@ claude plugin validate .
 node --check plugins/litsquare-stage-animation/scripts/check-stage-app.mjs
 node --check plugins/litsquare-stage-animation/scripts/render-stage-project.mjs
 node --check plugins/litsquare-stage-animation/scripts/get-render-progress-state.mjs
-node --check plugins/litsquare-stage-animation/scripts/build-render-progress-widget.mjs
 node --check plugins/litsquare-stage-animation/scripts/make-render-progress-preview-url.mjs
 node --check plugins/litsquare-stage-animation/scripts/test-anotherplanet-smoke.mjs
 node --test tests/*.test.mjs
-node plugins/litsquare-stage-animation/scripts/build-render-progress-widget.mjs
 node plugins/litsquare-stage-animation/scripts/make-render-progress-preview-url.mjs
 ```
 
-The preview URL command is the offline smoke test for the render-progress HTML template. It verifies that the bundled widget can load a valid state payload, but it does not prove Codex in-conversation rendering. In-conversation rendering requires the LitSquare Stage app JSON-RPC MCP bridge to expose `litsquare_stage_start_video_render`, `litsquare_stage_start_sequence_render`, `litsquare_stage_render_progress`, and `ui://widget/litsquare-stage-render-progress.html` with `_meta["openai/outputTemplate"]`.
+The preview URL command fetches the canonical compact widget and current progress state from the running LitSquare Stage app. In-conversation rendering requires the app JSON-RPC MCP bridge to expose `litsquare_stage_start_video_render`, `litsquare_stage_start_sequence_render`, `litsquare_stage_render_progress`, and `ui://widget/litsquare-stage-render-progress-v2.html` through standard `_meta.ui.resourceUri` plus the `openai/outputTemplate` compatibility alias.
 
 The render progress UI is served as an MCP widget resource by the LitSquare Stage macOS app. It is not installed through a ChatGPT app Connect redirect.
 
