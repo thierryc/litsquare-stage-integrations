@@ -7,7 +7,7 @@
 - Assets are local and loaded.
 - Fonts are ready in `prepareExport`.
 - API inputs are snapshotted.
-- Render path passed `scripts/check-stage-app.mjs`.
+- MCP-first readiness passed through `litsquare_stage_render_progress`; use `scripts/check-stage-app.mjs` only when direct MCP tools are unavailable and localhost is permitted.
 
 ## Still Checks
 

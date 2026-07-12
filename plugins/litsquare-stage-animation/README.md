@@ -24,7 +24,7 @@ The plugin includes one shared `.mcp.json` for the local LitSquare Stage macOS a
 }
 ```
 
-Use `scripts/init-stage-project.mjs` to copy and normalize templates, `scripts/validate-stage-project.mjs` to check the minimum project contract, `scripts/check-stage-app.mjs` before renders, `scripts/render-stage-project.mjs` only for CLI fallback renders, and `scripts/get-render-progress-state.mjs` to adapt app job state into the progress-widget state model.
+Use the canonical MCP progress tool as the primary readiness check. Use `scripts/check-stage-app.mjs` only in clients where the plugin MCP tools are unavailable and localhost access is permitted. Use `scripts/init-stage-project.mjs` to copy and normalize templates, `scripts/validate-stage-project.mjs` to check the minimum project contract, `scripts/render-stage-project.mjs` only for CLI fallback renders, and `scripts/get-render-progress-state.mjs` to adapt app job state into the progress-widget state model.
 
 The plugin also includes a render-progress UI template for the app-served MCP widget:
 

@@ -8,7 +8,7 @@ The LitSquare Stage macOS app is the only render host enabled by this plugin ver
 - MCP shell: `http://127.0.0.1:7460/mcp`
 - Event stream: `http://127.0.0.1:7460/mcp/events`
 
-Before rendering, verify macOS, app installation, `/healthz`, and `/mcp` readiness with `scripts/check-stage-app.mjs`.
+When canonical MCP tools are available, call `litsquare_stage_render_progress` first and treat a valid structured response as authoritative readiness. Use `scripts/check-stage-app.mjs` only when direct MCP tools are unavailable and localhost access is permitted. A failed sandboxed shell request to `127.0.0.1` does not prove the app service is down.
 
 ## Tool Envelope
 

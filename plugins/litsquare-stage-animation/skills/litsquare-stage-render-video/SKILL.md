@@ -9,15 +9,26 @@ Use for every still, sequence, video, queue, progress, and diagnostics operation
 
 ## Mandatory Preflight
 
-Before any render operation, run:
+Use MCP-first preflight before every render:
+
+1. If the canonical `litsquare_stage_render_progress` tool is available, call it without a `jobID`.
+2. Treat a valid structured progress response, including `idle`, as authoritative proof that the LitSquare Stage service and plugin MCP transport are ready.
+3. Confirm that `litsquare_stage_start_video_render`, `litsquare_stage_start_sequence_render`, and `litsquare_stage_set_render_window_state` are available before the corresponding workflow needs them.
+4. Do not run the shell preflight when the canonical MCP tools are available.
+
+Only when direct MCP tools are unavailable, run:
 
 ```bash
 node plugins/litsquare-stage-animation/scripts/check-stage-app.mjs
 ```
 
-Passing readiness requires macOS plus a healthy native `litsquare-stage-macos` service, render tools, and the JSON-RPC render-progress bridge. Codex can use the bridge's inline widget metadata; Claude Code consumes the same structured progress tools. A standard app-bundle path is recommended but not required when the verified native service is already running.
+The fallback script requires localhost network access. If it reports `service_unreachable` for an installed or running app from a sandboxed command:
 
-If preflight fails, stop and display its `mandatoryMessage`. Treat `debug_app_unregistered` as a non-blocking developer warning when the native service, render tools, and widget bridge are healthy.
+- Do not tell the user to restart the app based only on that shell failure.
+- Prefer the direct MCP tool result.
+- If direct MCP tools are absent, request permission for a read-only localhost probe or report that the client has not loaded the plugin MCP server.
+
+Passing readiness requires macOS plus a healthy native `litsquare-stage-macos` service and the canonical render tools. Treat `debug_app_unregistered` as a non-blocking developer warning when the verified native service is healthy.
 
 Do not use Chromium, Playwright, browser automation, or a remote service as a fallback.
 

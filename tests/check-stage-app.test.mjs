@@ -1,5 +1,7 @@
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
 import test from "node:test";
+import { fileURLToPath } from "node:url";
 
 import {
   appCandidatePaths,
@@ -74,4 +76,15 @@ test("explicit and environment app paths precede canonical install paths", () =>
       "/tmp/home/Applications/LitSquare Stage.app"
     ]
   );
+});
+
+test("render skill makes direct MCP readiness authoritative", async () => {
+  const skillPath = fileURLToPath(new URL(
+    "../plugins/litsquare-stage-animation/skills/litsquare-stage-render-video/SKILL.md",
+    import.meta.url
+  ));
+  const skill = await readFile(skillPath, "utf8");
+  assert.match(skill, /MCP-first preflight/);
+  assert.match(skill, /Do not run the shell preflight when the canonical MCP tools are available/);
+  assert.match(skill, /Do not tell the user to restart the app based only on that shell failure/);
 });

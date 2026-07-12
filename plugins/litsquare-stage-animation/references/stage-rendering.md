@@ -100,7 +100,7 @@ When the MCP window feedback tool is available, use the native app window to sho
 
 ## Scripts
 
-- `scripts/check-stage-app.mjs`: JSON readiness check for macOS, app path, `/healthz`, and `/mcp`.
+- `scripts/check-stage-app.mjs`: fallback JSON readiness check for clients without direct MCP tools; requires permitted localhost access.
 - `scripts/render-stage-project.mjs`: JSON render client for frame, sequence, and video jobs.
 - `scripts/get-render-progress-state.mjs`: adapts app render status into progress-widget JSON.
 - `scripts/build-render-progress-widget.mjs`: rebuilds the single-file progress widget asset.
