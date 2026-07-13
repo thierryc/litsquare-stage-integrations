@@ -7,7 +7,7 @@ import { pathToFileURL } from "node:url";
 const DEFAULT_HEALTH_URL = "http://127.0.0.1:7460/healthz";
 const DEFAULT_MCP_URL = "http://127.0.0.1:7460/mcp";
 const REQUIRED_MCP_PROTOCOL_VERSION = "2025-06-18";
-const PROGRESS_TEMPLATE_URI = "ui://widget/litsquare-stage-render-progress-v2.html";
+const PROGRESS_TEMPLATE_URI = "ui://widget/litsquare-stage-render-progress-v3.html";
 const PROGRESS_MIME_TYPE = "text/html+skybridge";
 const WIDGET_TOOL_NAMES = [
   "litsquare_stage_start_video_render",
@@ -235,6 +235,8 @@ async function probeWidgetBridge(url, timeoutMs) {
       widgetResource.text.includes("window.openai") &&
       widgetResource.text.includes("litsquare_stage_render_progress") &&
       widgetResource.text.includes("notifyIntrinsicHeight") &&
+      widgetResource.text.includes("preview-grid") &&
+      widgetResource.text.includes("object-fit: contain") &&
       !widgetResource.text.includes("preview-strip");
 
     return {

@@ -4,13 +4,13 @@ The compact render-progress widget is owned and served by the LitSquare Stage ma
 
 ## Canonical Resource
 
-- MCP resource: `ui://widget/litsquare-stage-render-progress-v2.html`
+- MCP resource: `ui://widget/litsquare-stage-render-progress-v3.html`
 - MIME type: `text/html+skybridge`
 - App source: `Sources/LitSquareStageRenderKit/Resources/RenderProgressWidget.html` in the macOS repository
 - State adapter: `scripts/get-render-progress-state.mjs`
 - Local preview helper: `scripts/make-render-progress-preview-url.mjs`
 
-The widget is a dependency-free inline card with one compact header, a progress row, one metadata line, a constrained latest-frame preview, and collapsed details. Artifacts, recent events, and diagnostics are capped so the card never creates nested scrolling.
+The widget is a dependency-free inline card with one compact header, a progress row, one metadata line, a source-fitted preview grid that shows one frame on narrow surfaces, two at medium width, and up to three at wide width, plus collapsed details. Artifacts, recent events, and diagnostics are capped so the card never creates nested scrolling.
 
 ## Local Preview
 
@@ -28,7 +28,7 @@ node plugins/litsquare-stage-animation/scripts/get-render-progress-state.mjs --p
 node plugins/litsquare-stage-animation/scripts/make-render-progress-preview-url.mjs --state /tmp/stage-progress.json
 ```
 
-The helper writes the app-served HTML to a temporary file and prints a file URL with state attached. It fails when the companion app is unavailable or still exposes the v1 widget contract.
+The helper writes the app-served HTML to a temporary file and prints a file URL with state attached. It fails when the companion app is unavailable or still exposes the v2 widget contract.
 
 ## Conversation Contract
 
@@ -36,7 +36,7 @@ The LitSquare Stage JSON-RPC MCP bridge must:
 
 1. Expose `litsquare_stage_start_video_render`, `litsquare_stage_start_sequence_render`, and `litsquare_stage_render_progress`.
 2. Return progress state as `structuredContent`.
-3. Attach `_meta.ui.resourceUri` with the v2 URI and mirror it in `openai/outputTemplate` for compatibility.
+3. Attach `_meta.ui.resourceUri` with the v3 URI and mirror it in `openai/outputTemplate` for compatibility.
 4. Serve the widget resource with `_meta.ui.prefersBorder: false`, `openai/widgetPrefersBorder: false`, and `openai/widgetDescription`.
 5. Deliver updates through MCP Apps `ui/notifications/tool-result`, `openai:set_globals`, or widget-initiated progress polling.
 

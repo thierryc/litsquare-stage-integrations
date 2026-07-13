@@ -1,6 +1,6 @@
 {
   "name": "litsquare-stage-animation",
-  "version": "0.9.4",
+  "version": "0.9.5",
   "description": "Create, refine, and render code-first LitSquare Stage animations through the macOS companion app.",
   "author": {
     "name": "Thierry Charbonnel"

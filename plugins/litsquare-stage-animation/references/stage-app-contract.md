@@ -43,7 +43,7 @@ Window feedback tool:
 The render progress widget resource is:
 
 ```text
-ui://widget/litsquare-stage-render-progress-v2.html
+ui://widget/litsquare-stage-render-progress-v3.html
 ```
 
 Its MIME type is:
@@ -58,9 +58,9 @@ Tool descriptors and tool results that should render inline in Codex must includ
 {
   "_meta": {
     "ui": {
-      "resourceUri": "ui://widget/litsquare-stage-render-progress-v2.html"
+      "resourceUri": "ui://widget/litsquare-stage-render-progress-v3.html"
     },
-    "openai/outputTemplate": "ui://widget/litsquare-stage-render-progress-v2.html",
+    "openai/outputTemplate": "ui://widget/litsquare-stage-render-progress-v3.html",
     "openai/widgetAccessible": true
   }
 }
@@ -179,7 +179,7 @@ The app feeds the widget with render snapshots through MCP Apps `ui/notification
 
 To render the widget inside a Codex conversation, use the JSON-RPC UI-bearing tool bridge:
 
-- Serve the app resource at `ui://widget/litsquare-stage-render-progress-v2.html`.
+- Serve the app resource at `ui://widget/litsquare-stage-render-progress-v3.html`.
 - Return render progress as `structuredContent`, including human-readable `completedFrames`.
 - Add standard `_meta.ui.resourceUri` and mirror it with `_meta["openai/outputTemplate"]`.
 - Set resource metadata `_meta.ui.prefersBorder: false`, `openai/widgetPrefersBorder: false`, and `openai/widgetDescription`.

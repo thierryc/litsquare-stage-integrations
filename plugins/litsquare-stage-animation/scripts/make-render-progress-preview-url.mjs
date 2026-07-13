@@ -5,7 +5,7 @@ import path from "node:path";
 import { pathToFileURL } from "node:url";
 
 const DEFAULT_MCP_URL = "http://127.0.0.1:7460/mcp";
-const PROGRESS_TEMPLATE_URI = "ui://widget/litsquare-stage-render-progress-v2.html";
+const PROGRESS_TEMPLATE_URI = "ui://widget/litsquare-stage-render-progress-v3.html";
 const args = parseArgs(process.argv.slice(2));
 
 try {
@@ -16,7 +16,7 @@ try {
 
   const mcpURL = String(args.mcpUrl ?? process.env.STAGE_MCP_URL ?? DEFAULT_MCP_URL);
   const timeoutMs = numberArg(args.probeTimeoutMs ?? args.timeoutMs, 5000);
-  const outputPath = path.resolve(String(args.output ?? path.join(os.tmpdir(), "litsquare-stage-render-progress-v2.html")));
+  const outputPath = path.resolve(String(args.output ?? path.join(os.tmpdir(), "litsquare-stage-render-progress-v3.html")));
   const widgetResponse = await jsonRPC(
     mcpURL,
     "resources/read",
@@ -27,7 +27,7 @@ try {
   const contents = Array.isArray(widgetResponse?.result?.contents) ? widgetResponse.result.contents : [];
   const resource = contents.find((entry) => entry?.uri === PROGRESS_TEMPLATE_URI);
   if (typeof resource?.text !== "string" || !resource.text.includes("litsquare-stage-render-progress")) {
-    throw new Error("The running LitSquare Stage app did not return the v2 progress widget resource.");
+    throw new Error("The running LitSquare Stage app did not return the v3 progress widget resource.");
   }
 
   const statePath = args.state ? path.resolve(String(args.state)) : null;
@@ -129,6 +129,6 @@ function printUsage() {
   node plugins/litsquare-stage-animation/scripts/make-render-progress-preview-url.mjs --job-id JOB_ID
   node plugins/litsquare-stage-animation/scripts/make-render-progress-preview-url.mjs --state /tmp/stage-progress.json
 
-Fetches the canonical v2 widget resource from the running LitSquare Stage macOS app,
+Fetches the canonical v3 widget resource from the running LitSquare Stage macOS app,
 writes a temporary HTML preview, and prints its file URL with render state attached.`);
 }

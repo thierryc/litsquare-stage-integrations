@@ -9,7 +9,7 @@
       "name": "litsquare-stage-animation",
       "source": "./plugins/litsquare-stage-animation",
       "description": "Create, refine, and render code-first LitSquare Stage animations through the macOS companion app.",
-      "version": "0.9.4",
+      "version": "0.9.5",
       "category": "development",
       "tags": ["animation", "rendering", "video", "mcp", "macos"]
     }

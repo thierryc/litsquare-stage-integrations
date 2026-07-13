@@ -63,7 +63,7 @@ node --test tests/*.test.mjs
 node plugins/litsquare-stage-animation/scripts/make-render-progress-preview-url.mjs
 ```
 
-The preview URL command fetches the canonical compact widget and current progress state from the running LitSquare Stage app. In-conversation rendering requires the app JSON-RPC MCP bridge to expose `litsquare_stage_start_video_render`, `litsquare_stage_start_sequence_render`, `litsquare_stage_render_progress`, and `ui://widget/litsquare-stage-render-progress-v2.html` through standard `_meta.ui.resourceUri` plus the `openai/outputTemplate` compatibility alias.
+The preview URL command fetches the canonical compact widget and current progress state from the running LitSquare Stage app. In-conversation rendering requires the app JSON-RPC MCP bridge to expose `litsquare_stage_start_video_render`, `litsquare_stage_start_sequence_render`, `litsquare_stage_render_progress`, and `ui://widget/litsquare-stage-render-progress-v3.html` through standard `_meta.ui.resourceUri` plus the `openai/outputTemplate` compatibility alias.
 
 The render progress UI is served as an MCP widget resource by the LitSquare Stage macOS app. It is not installed through a ChatGPT app Connect redirect.
 

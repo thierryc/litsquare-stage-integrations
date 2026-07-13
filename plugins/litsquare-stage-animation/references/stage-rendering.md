@@ -41,7 +41,7 @@ JSON-RPC MCP window feedback tool:
 
 Progress UI:
 
-- Canonical widget: app-served `ui://widget/litsquare-stage-render-progress-v2.html`
+- Canonical widget: app-served `ui://widget/litsquare-stage-render-progress-v3.html`
 - Widget source: macOS app `Sources/LitSquareStageRenderKit/Resources/RenderProgressWidget.html`
 - State contract: `references/render-progress-ui.md`
 - Claude Code activation and reload behavior: `references/claude-code-integration.md`
