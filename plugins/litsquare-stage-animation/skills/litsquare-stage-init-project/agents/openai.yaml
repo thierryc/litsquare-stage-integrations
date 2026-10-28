@@ -1,6 +1,9 @@
 interface:
   display_name: "LitSquare Stage Init Project"
-  short_description: "Initialize a runnable LitSquare Stage video project with responsive stage and runner"
-  default_prompt: "Initialize a LitSquare Stage video project with frame-derived motion and render-safe defaults."
+  short_description: "Initialize a render-safe Stage project"
+  icon_small: "./assets/icon-small.png"
+  icon_large: "./assets/icon-large.svg"
+  brand_color: "#97005E"
+  default_prompt: "Use $litsquare-stage-init-project to initialize a Stage project with render-safe defaults."
 policy:
   allow_implicit_invocation: true

@@ -1,13 +1,14 @@
 {
   "name": "litsquare-stage-template-variable-font-title",
   "private": true,
+  "packageManager": "pnpm@10.29.2",
   "type": "module",
   "scripts": {
     "build": "vite build",
     "dev": "vite --host 127.0.0.1"
   },
   "dependencies": {
-    "@litsquare/stage": "file:../../../../../litsquare-stage/packages/stage"
+    "@litsquare/stage": "^0.1.1"
   },
   "devDependencies": {
     "vite": "^6.3.5",

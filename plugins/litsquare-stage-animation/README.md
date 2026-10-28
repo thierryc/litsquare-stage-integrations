@@ -1,6 +1,6 @@
 # LitSquare Stage Animation Plugin
 
-`litsquare-stage-animation` bundles shared Codex and Claude Code skills for planning, building, polishing, and rendering LitSquare Stage animation projects.
+`litsquare-stage-animation` bundles agent skills for planning, building, polishing, and rendering LitSquare Stage animation projects. The packaged plugin targets Codex and Claude Code; its MCP service remains usable from Cursor and other MCP-capable coding agents.
 
 ## Skills
 
@@ -15,7 +15,7 @@
 
 ## App Integration
 
-The plugin includes one shared `.mcp.json` for the local LitSquare Stage macOS app endpoint. Its explicit HTTP transport type is accepted by both Codex and Claude Code. Keep it as an HTTP MCP connection, not a stdio proxy:
+The plugin includes one shared `.mcp.json` for the local LitSquare Stage macOS app endpoint. Its explicit HTTP transport type is accepted by Codex and Claude Code. Cursor and other MCP clients should register the same Streamable HTTP URL in their native MCP settings. Keep it as one HTTP connection, not a stdio proxy:
 
 ```json
 {
@@ -24,9 +24,11 @@ The plugin includes one shared `.mcp.json` for the local LitSquare Stage macOS a
 }
 ```
 
-Use the canonical MCP progress tool as the primary readiness check. Use `scripts/check-stage-app.mjs` only in clients where the plugin MCP tools are unavailable and localhost access is permitted. Use `scripts/init-stage-project.mjs` to copy and normalize templates, `scripts/validate-stage-project.mjs` to check the minimum project contract, `scripts/render-stage-project.mjs` only for CLI fallback renders, and `scripts/get-render-progress-state.mjs` to adapt app job state into the progress-widget state model.
+See `references/mcp-client-integration.md` for the portable client contract. Widget metadata is optional: all clients can use the canonical tools and `structuredContent` even when they do not support MCP Apps UI.
 
-The render-progress UI is owned and served by the LitSquare Stage macOS app at `ui://widget/litsquare-stage-render-progress-v3.html`; the plugin does not ship a duplicate HTML implementation. Both clients use the canonical JSON-RPC MCP tools: `litsquare_stage_start_video_render`, `litsquare_stage_start_sequence_render`, and `litsquare_stage_render_progress`. Codex can mount the compact app-served resource through standard `_meta.ui.resourceUri` and the `openai/outputTemplate` compatibility alias; Claude Code consumes the same structured state without depending on the widget host.
+Use the canonical MCP progress tool as the primary readiness check. Use `scripts/check-stage-app.mjs` only in clients where the plugin MCP tools are unavailable and localhost access is permitted. Use `scripts/init-stage-project.mjs` to copy and normalize templates, `scripts/validate-stage-project.mjs` to check the minimum project contract, `scripts/render-stage-project.mjs` only for CLI fallback renders, and `scripts/get-render-progress-state.mjs` to adapt app job state into the progress-widget state model. Initialized templates install the public `@litsquare/stage` runtime and do not depend on this repository's workspace layout.
+
+The render-progress UI is owned and served by the LitSquare Stage macOS app at `ui://widget/litsquare-stage-render-progress-v4.html`; the plugin does not ship a duplicate HTML implementation. All clients use the canonical JSON-RPC render tools: `litsquare_stage_start_video_render`, `litsquare_stage_start_sequence_render`, and `litsquare_stage_render_progress`. Widget-capable hosts can also call the app-only `litsquare_stage_open_render_artifact` action to open a completed video or reveal it in Finder. Codex can mount the compact app-served resource through standard `_meta.ui.resourceUri` and the `openai/outputTemplate` compatibility alias; Claude Code, Cursor, and other MCP clients consume the same structured render state without depending on the widget host.
 
 Preview the canonical resource and current app state locally:
 
@@ -51,7 +53,7 @@ The script builds `stages/anotherplanet-cube-litsquare-stage`, captures a still,
 For a local debug app bundle, pass:
 
 ```bash
-node plugins/litsquare-stage-animation/scripts/test-anotherplanet-smoke.mjs --app-path /private/tmp/LitSquare Stage Debug.app
+node plugins/litsquare-stage-animation/scripts/test-anotherplanet-smoke.mjs --app-path "/private/tmp/LitSquare Stage Debug.app"
 ```
 
 ## Templates
@@ -64,6 +66,8 @@ node plugins/litsquare-stage-animation/scripts/test-anotherplanet-smoke.mjs --ap
 - `webgpu-shader-loop`
 - `figma-frame-animation`
 - `weather-channel-batch`
+
+Maintain the shared runtime version with `scripts/sync-template-runtime.mjs`. Before a plugin release, run `scripts/check-template-portability.mjs` to initialize, install, build, and validate every template outside the repository.
 
 ## Prompt Assets
 

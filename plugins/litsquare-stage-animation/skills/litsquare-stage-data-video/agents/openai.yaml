@@ -1,6 +1,9 @@
 interface:
   display_name: "LitSquare Stage Data Video"
-  short_description: "Create deterministic LitSquare Stage video batches from API, CSV, or JSON snapshots"
-  default_prompt: "Generate data-driven LitSquare Stage video variants from this structured input."
+  short_description: "Create deterministic videos from structured data"
+  icon_small: "./assets/icon-small.png"
+  icon_large: "./assets/icon-large.svg"
+  brand_color: "#97005E"
+  default_prompt: "Use $litsquare-stage-data-video to generate Stage video variants from this structured input."
 policy:
   allow_implicit_invocation: true

@@ -7,6 +7,8 @@ description: Initialize or repair a runnable LitSquare Stage animation project. 
 
 This is the most important skill for new LitSquare Stage video work. It produces the minimum renderable project contract before any long render is attempted.
 
+Use host MCP tools for Stage app operations, or the shipped shared-client scripts when direct tools are unavailable. Never duplicate MCP protocol code or construct a raw `{tool,payload}` request.
+
 ## Inputs
 
 Infer sensible defaults when the user does not specify them:
@@ -28,9 +30,19 @@ Defaults: 1920x1080, 30 fps, 180 frames, draft motion blur disabled, final motio
    node plugins/litsquare-stage-animation/scripts/init-stage-project.mjs --template <template> --target <absolute-target> --name <project-name>
    ```
 
-5. Ensure the project has `stage.config.json`, Vite package scripts, `index.html`, `src/main.ts`, `src/styles.css`, local `assets/` and `data/` folders, a full-frame `#stage`, `createRunner`, `attachBrowserHost`, and `attachRenderHost`.
-6. Verify render-critical state is derived from `FrameContext`, not wall-clock time, unseeded randomness, CSS load timing, or requestAnimationFrame-only state.
-7. Run the project build when feasible, then run:
+5. Keep the generated `@litsquare/stage` registry dependency and committed lockfile. Do not replace them with workspace-relative paths.
+6. Ensure the project has `stage.config.json`, Vite package scripts, `index.html`, `src/main.ts`, `src/styles.css`, local `assets/` and `data/` folders, a full-frame `#stage`, `createRunner`, `attachBrowserHost`, and `attachRenderHost`.
+7. Verify render-critical state is derived from `FrameContext`, not wall-clock time, unseeded randomness, CSS load timing, or requestAnimationFrame-only state.
+8. Install and build deterministically:
+
+   ```bash
+   pnpm install --frozen-lockfile
+   pnpm build
+   ```
+
+   Use pnpm 10.29.2. If pnpm is missing but Node.js 22+ and npm are available, run `npx --yes pnpm@10.29.2 install --frozen-lockfile` and `npx --yes pnpm@10.29.2 build` from the project. Do not change global package-manager settings just to build a project.
+
+9. Validate the project:
 
    ```bash
    node plugins/litsquare-stage-animation/scripts/validate-stage-project.mjs --project <absolute-target>

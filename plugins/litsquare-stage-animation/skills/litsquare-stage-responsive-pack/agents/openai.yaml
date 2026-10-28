@@ -1,6 +1,9 @@
 interface:
   display_name: "LitSquare Stage Responsive Pack"
-  short_description: "Adapt one LitSquare Stage animation across social, HD, cinema, 4K, and 8K formats"
-  default_prompt: "Make this LitSquare Stage animation responsive across a render format pack."
+  short_description: "Adapt one animation across output formats"
+  icon_small: "./assets/icon-small.png"
+  icon_large: "./assets/icon-large.svg"
+  brand_color: "#97005E"
+  default_prompt: "Use $litsquare-stage-responsive-pack to adapt this Stage animation across a render format pack."
 policy:
   allow_implicit_invocation: true

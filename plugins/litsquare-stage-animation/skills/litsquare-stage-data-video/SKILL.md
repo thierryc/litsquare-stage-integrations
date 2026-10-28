@@ -7,6 +7,8 @@ description: Generate LitSquare Stage videos from structured data and batch vari
 
 Use for data-driven and batch-rendered videos.
 
+Use host MCP tools for app operations, or the shipped shared-client scripts when direct tools are unavailable. Never duplicate MCP protocol code or construct a raw `{tool,payload}` request.
+
 ## Workflow
 
 1. Define the data contract and required fields.

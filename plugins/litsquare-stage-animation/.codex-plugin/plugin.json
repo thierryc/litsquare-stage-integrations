@@ -1,10 +1,13 @@
 {
   "name": "litsquare-stage-animation",
-  "version": "0.9.5",
+  "version": "0.9.6",
   "description": "Create, refine, and render code-first LitSquare Stage animations through the macOS companion app.",
   "author": {
-    "name": "Thierry Charbonnel"
+    "name": "Thierry Charbonnel",
+    "url": "https://github.com/thierryc"
   },
+  "homepage": "https://github.com/thierryc/litsquare-stage-integrations",
+  "repository": "https://github.com/thierryc/litsquare-stage-integrations",
   "license": "MIT",
   "keywords": [
     "litsquare-stage",
@@ -24,7 +27,7 @@
     "displayName": "LitSquare Stage Animation",
     "shortDescription": "Create responsive LitSquare Stage videos through the macOS app.",
     "longDescription": "LitSquare Stage Animation helps agents plan code-first motion pieces, create responsive LitSquare Stage projects, adapt them across social, broadcast, cinema, and 8K formats, and render stills, image sequences, or H.264 video through the LitSquare Stage macOS app. The macOS app is mandatory in this version.",
-    "developerName": "LitSquare",
+    "developerName": "Thierry Charbonnel",
     "category": "Productivity",
     "capabilities": [
       "Write",
@@ -35,6 +38,12 @@
       "Render this LitSquare Stage project to 4K MP4.",
       "Turn data or Figma input into a video."
     ],
-    "brandColor": "#2563EB"
+    "websiteURL": "https://github.com/thierryc/litsquare-stage-integrations",
+    "privacyPolicyURL": "https://github.com/thierryc/litsquare-stage-integrations/blob/main/legal/PRIVACY.md",
+    "termsOfServiceURL": "https://github.com/thierryc/litsquare-stage-integrations/blob/main/legal/EULA.md",
+    "brandColor": "#97005E",
+    "composerIcon": "./assets/composer-icon.png",
+    "logo": "./assets/logo.png",
+    "logoDark": "./assets/logo-dark.png"
   }
 }

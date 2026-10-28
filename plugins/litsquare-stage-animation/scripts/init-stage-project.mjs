@@ -3,6 +3,11 @@ import { access, cp, mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
+import {
+  normalizeStageRuntime,
+  stagePackageManager
+} from "./stage-runtime-release.mjs";
+
 const pluginRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const templatesRoot = path.join(pluginRoot, "templates");
 const args = parseArgs(process.argv.slice(2));
@@ -39,6 +44,12 @@ try {
     ok: true,
     project: target,
     template,
+    packageManager: stagePackageManager,
+    commands: [
+      "pnpm install --frozen-lockfile",
+      "pnpm build",
+      `node ${path.join(pluginRoot, "scripts", "validate-stage-project.mjs")} --project ${target}`
+    ],
     next: `node ${path.join(pluginRoot, "scripts", "validate-stage-project.mjs")} --project ${target}`
   }, null, 2));
 } catch (error) {
@@ -51,7 +62,7 @@ try {
 
 async function normalizePackage(target, name) {
   const packagePath = path.join(target, "package.json");
-  const json = JSON.parse(await readFile(packagePath, "utf8"));
+  const json = normalizeStageRuntime(JSON.parse(await readFile(packagePath, "utf8")));
   json.name = packageName(name);
   json.private = true;
   json.type = "module";

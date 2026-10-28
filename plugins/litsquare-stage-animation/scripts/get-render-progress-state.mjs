@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { StageMCPClient, probeHealth } from "./stage-mcp-client.mjs";
 
 const DEFAULT_HEALTH_URL = "http://127.0.0.1:7460/healthz";
 const DEFAULT_MCP_URL = "http://127.0.0.1:7460/mcp";
@@ -9,6 +10,11 @@ const args = parseArgs(process.argv.slice(2));
 const mcpURL = String(args.mcpUrl ?? process.env.STAGE_MCP_URL ?? DEFAULT_MCP_URL);
 const healthURL = String(args.healthUrl ?? process.env.STAGE_HEALTH_URL ?? DEFAULT_HEALTH_URL);
 const timeoutMs = numberArg(args.timeoutMs ?? args.timeout, 5000);
+const mcpClient = new StageMCPClient({
+  url: mcpURL,
+  timeoutMs,
+  clientName: "litsquare-stage-progress-script"
+});
 
 try {
   if (args.help) {
@@ -41,7 +47,7 @@ async function readProgressState() {
   const config = objectValue(manifest.config) ?? manifest;
   const preview = objectValue(config.preview) ?? {};
   const render = objectValue(config.render) ?? objectValue(status?.render) ?? {};
-  const diagnostics = normalizeDiagnostics(status?.diagnostics ?? status?.warnings ?? job?.diagnostics);
+  const diagnostics = diagnosticsFor(job, status);
 
   const totalFrames = firstNumber(
     job?.totalFrames,
@@ -74,7 +80,7 @@ async function readProgressState() {
     remainingSeconds: firstNumber(job?.remainingSeconds, job?.estimatedRemainingSeconds, job?.etaSeconds),
     motionBlur: job?.motionBlur ?? render.motionBlur ?? { enabled: false },
     artifacts: artifactList(job, status),
-    events: compactEvents(status?.events ?? status?.recentEvents ?? job?.events),
+    events: compactEvents(status?.events ?? status?.recentEvents ?? job?.events, job),
     diagnostics,
     updatedAt: new Date().toISOString()
   };
@@ -110,13 +116,13 @@ async function assertAppReady(healthURL, mcpURL, timeoutMs) {
     throw new Error(MANDATORY_MESSAGE);
   }
 
-  const health = await probe(healthURL, timeoutMs);
+  const health = await probeHealth(healthURL, timeoutMs);
   if (!health.ok) {
     throw new Error(`${MANDATORY_MESSAGE} Health check failed: ${health.error ?? health.status}`);
   }
 
-  const mcp = await probe(mcpURL, timeoutMs, true);
-  if (!mcp.ok || !Array.isArray(mcp.body?.tools) || !mcp.body.tools.includes("get_project_status")) {
+  const tools = await mcpClient.listTools();
+  if (!Array.isArray(tools?.tools) || !tools.tools.some((tool) => tool?.name === "litsquare_stage_render_progress")) {
     throw new Error(`${MANDATORY_MESSAGE} MCP endpoint is not ready.`);
   }
 }
@@ -130,44 +136,10 @@ async function callOptionalTool(url, tool, payload, timeoutMs) {
 }
 
 async function callTool(url, tool, payload, timeoutMs) {
-  const response = await fetchWithTimeout(url, {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify({ tool, payload })
-  }, timeoutMs);
-  const body = await response.json();
-  if (!body.ok) {
-    throw new Error(body.error ?? `LitSquare Stage tool ${tool} failed.`);
+  if (url !== mcpClient.url) {
+    throw new Error(`Unexpected MCP endpoint ${url}.`);
   }
-  return body.data;
-}
-
-async function probe(url, timeoutMs, parseJson = false) {
-  try {
-    const response = await fetchWithTimeout(url, { method: "GET" }, timeoutMs);
-    const text = await response.text();
-    return {
-      ok: response.ok,
-      status: response.status,
-      body: parseJson ? JSON.parse(text) : text
-    };
-  } catch (error) {
-    return {
-      ok: false,
-      status: null,
-      error: errorMessage(error)
-    };
-  }
-}
-
-async function fetchWithTimeout(url, init, timeoutMs) {
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), timeoutMs);
-  try {
-    return await fetch(url, { ...init, signal: controller.signal });
-  } finally {
-    clearTimeout(timer);
-  }
+  return await mcpClient.callTool(tool, payload, timeoutMs);
 }
 
 function normalizeList(value) {
@@ -184,6 +156,14 @@ function normalizeDiagnostics(value) {
     }
     return entry && typeof entry === "object" ? entry : null;
   }).filter(Boolean);
+}
+
+function diagnosticsFor(job, status) {
+  const jobStatus = String(job?.status ?? "").toLowerCase();
+  if (job && jobStatus !== "failed") {
+    return [];
+  }
+  return normalizeDiagnostics(job?.diagnostics ?? status?.diagnostics ?? status?.warnings);
 }
 
 function artifactList(job, status) {
@@ -203,8 +183,15 @@ function artifactList(job, status) {
   return [];
 }
 
-function compactEvents(value) {
-  return normalizeList(value).slice(-8).map((event) => {
+function compactEvents(value, job) {
+  const jobID = String(job?.jobID ?? job?.id ?? "");
+  if (!jobID) {
+    return [];
+  }
+  return normalizeList(value).filter((event) => {
+    const eventJob = objectValue(event.job);
+    return String(eventJob?.jobID ?? eventJob?.id ?? "") === jobID;
+  }).slice(0, 8).map((event) => {
     const eventJob = objectValue(event.job);
     return {
       timestamp: event.createdAt ?? event.timestamp ?? event.updatedAt,

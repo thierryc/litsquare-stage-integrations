@@ -1,6 +1,9 @@
 interface:
   display_name: "LitSquare Stage Render Video"
-  short_description: "Natively render and encode video in LitSquare Stage"
+  short_description: "Render and natively encode Stage video"
+  icon_small: "./assets/icon-small.png"
+  icon_large: "./assets/icon-large.svg"
+  brand_color: "#97005E"
   default_prompt: "Use $litsquare-stage-render-video to render and natively encode this video in the LitSquare Stage app."
 policy:
   allow_implicit_invocation: true

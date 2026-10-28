@@ -7,6 +7,8 @@ description: Render and natively encode LitSquare Stage projects through the man
 
 Use for every still, sequence, video, queue, progress, and diagnostics operation.
 
+All fallback scripts use `scripts/stage-mcp-client.mjs`, initialize once, and call standard JSON-RPC MCP. Never construct or send the deprecated raw `{tool,payload}` envelope.
+
 ## Mandatory Preflight
 
 Use MCP-first preflight before every render:
@@ -21,6 +23,8 @@ Only when direct MCP tools are unavailable, run:
 ```bash
 node plugins/litsquare-stage-animation/scripts/check-stage-app.mjs
 ```
+
+For client registration or transport problems, read `references/mcp-client-integration.md` before changing MCP configuration.
 
 The fallback script requires localhost network access. If it reports `service_unreachable` for an installed or running app from a sandboxed command:
 
@@ -47,20 +51,21 @@ For every requested video deliverable, use `litsquare_stage_start_video_render` 
 ## Render Workflow
 
 1. Inspect `stage.config.json`.
-2. Build the project using its package manager.
-3. Run `validate-stage-project.mjs`.
-4. Capture at least one still before long video or blurred renders.
-5. Use `litsquare_stage_set_render_window_state` as live user feedback when MCP tools are available:
-   - Before still capture or quick frame inspection, show and front the app window with `compactMode: true`.
-   - Before video renders, long sequences, or progress monitoring, show and front the app window with `compactMode: false`.
-   - Use `floating: true` only when persistent visible status helps the user; otherwise leave floating unchanged or false.
-   - Hide or send back the window only after completion or when the user asks for less visual interruption.
-6. For video output, call `litsquare_stage_start_video_render` directly. Do not call the sequence tool as an intermediate video-encoding step.
-7. Use `litsquare_stage_start_sequence_render` only for an explicitly requested image-sequence deliverable.
-8. For long visible renders, poll `litsquare_stage_render_progress` until the native video job is terminal.
-9. Use `scripts/render-stage-project.mjs --kind video` only when connector widget tools are unavailable or CLI automation is required.
-10. Verify artifact existence, non-zero size, dimensions, frame count or duration, fps, visible content, and native-app provenance.
-11. Hand off to `litsquare-stage-quality-review`.
+2. If audio is requested, read `references/audio-sync.md` and confirm `render.audioEnabled` is `true` in every target configuration.
+3. Build the project using its package manager.
+4. Run `validate-stage-project.mjs`.
+5. Capture at least one still before long video or blurred renders.
+6. Preserve the user's window visibility and focus during rendering:
+   - The native renderer uses one compact layout for stills, sequences, and video.
+   - Show or bring it forward only when the user requests visible progress or inspection; use `compactMode: true` for compatibility.
+   - Set `floating: true` only when the user asks to keep the renderer on top.
+   - Background rendering must finish without requiring foreground activation.
+7. For video output, call `litsquare_stage_start_video_render` directly. Do not call the sequence tool as an intermediate video-encoding step.
+8. Use `litsquare_stage_start_sequence_render` only for an explicitly requested image-sequence deliverable.
+9. For long visible renders, poll `litsquare_stage_render_progress` with the returned `jobID` until that job is terminal. Treat its status and final events as authoritative; do not carry diagnostics from an older job into a retry.
+10. Use `scripts/render-stage-project.mjs --kind video` only when canonical MCP tools are unavailable or CLI automation is required.
+11. Verify artifact existence, non-zero size, dimensions, frame count or duration, fps, visible content, native-app provenance, and requested audio tracks.
+12. Hand off to `litsquare-stage-quality-review`.
 
 Canonical quick-start request:
 

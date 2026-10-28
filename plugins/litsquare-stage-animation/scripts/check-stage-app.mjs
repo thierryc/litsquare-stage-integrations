@@ -3,18 +3,19 @@ import { access } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
+import { StageMCPClient, probeHealth } from "./stage-mcp-client.mjs";
 
 const DEFAULT_HEALTH_URL = "http://127.0.0.1:7460/healthz";
 const DEFAULT_MCP_URL = "http://127.0.0.1:7460/mcp";
-const REQUIRED_MCP_PROTOCOL_VERSION = "2025-06-18";
-const PROGRESS_TEMPLATE_URI = "ui://widget/litsquare-stage-render-progress-v3.html";
+const REQUIRED_MCP_PROTOCOL_VERSION = "2025-11-25";
+const PROGRESS_TEMPLATE_URI = "ui://widget/litsquare-stage-render-progress-v4.html";
 const PROGRESS_MIME_TYPE = "text/html+skybridge";
 const WIDGET_TOOL_NAMES = [
   "litsquare_stage_start_video_render",
   "litsquare_stage_start_sequence_render",
-  "litsquare_stage_render_progress"
+  "litsquare_stage_render_progress",
+  "litsquare_stage_open_render_artifact"
 ];
-const REQUIRED_RAW_TOOLS = ["load_project", "capture_frame", "render_video"];
 
 if (import.meta.url === pathToFileURL(process.argv[1]).href) {
   await main();
@@ -93,9 +94,7 @@ export function assessReadiness({ isMac, app, health, mcp, widgetBridge }) {
     };
   }
 
-  const rawTools = Array.isArray(mcp.tools) ? mcp.tools : [];
-  const missingRawTools = REQUIRED_RAW_TOOLS.filter((name) => !rawTools.includes(name));
-  if (mcp.server !== "litsquare-stage-macos" || missingRawTools.length > 0) {
+  if (mcp.server !== "litsquare-stage-macos") {
     return {
       ok: false,
       failureCode: "mcp_incompatible",
@@ -151,49 +150,34 @@ async function findApp(paths) {
 
 async function probeText(url, timeoutMs) {
   const startedAt = Date.now();
-  try {
-    const response = await fetchWithTimeout(url, { method: "GET" }, timeoutMs);
-    const text = await response.text();
-    return {
-      ok: response.ok,
-      url,
-      status: response.status,
-      elapsedMs: Date.now() - startedAt,
-      bodyPreview: text.slice(0, 200)
-    };
-  } catch (error) {
-    return {
-      ok: false,
-      url,
-      status: null,
-      elapsedMs: Date.now() - startedAt,
-      error: errorMessage(error)
-    };
-  }
+  const result = await probeHealth(url, timeoutMs);
+  return {
+    ...result,
+    url,
+    elapsedMs: Date.now() - startedAt,
+    bodyPreview: typeof result.body === "string" ? result.body.slice(0, 200) : undefined
+  };
 }
 
 async function probeMCP(url, timeoutMs) {
   const startedAt = Date.now();
   try {
-    const response = await fetchWithTimeout(url, { method: "GET" }, timeoutMs);
-    const contentType = response.headers.get("content-type") ?? "";
-    const text = await response.text();
-    let body = null;
-    try {
-      body = JSON.parse(text);
-    } catch {
-      body = null;
-    }
-    const tools = Array.isArray(body?.tools) ? body.tools : [];
+    const client = new StageMCPClient({ url, timeoutMs, clientName: "litsquare-stage-preflight" });
+    const protocolVersion = await client.initialize();
+    const toolsResult = await client.listTools();
+    const tools = Array.isArray(toolsResult?.tools)
+      ? toolsResult.tools.map((tool) => tool?.name).filter((name) => typeof name === "string")
+      : [];
     return {
-      ok: response.ok && body?.ok === true,
+      ok: true,
       url,
-      status: response.status,
+      status: 200,
       elapsedMs: Date.now() - startedAt,
-      contentType,
-      server: body?.server ?? null,
+      contentType: "application/json",
+      server: client.initializeResult?.serverInfo?.name ?? null,
+      protocolVersion,
       tools,
-      hasRenderVideo: tools.includes("render_video")
+      hasRenderVideo: tools.includes("litsquare_stage_start_video_render")
     };
   } catch (error) {
     return {
@@ -209,12 +193,11 @@ async function probeMCP(url, timeoutMs) {
 async function probeWidgetBridge(url, timeoutMs) {
   const startedAt = Date.now();
   try {
-    const [initialize, toolsList, resourceRead] = await Promise.all([
-      jsonRPC(url, "initialize", {}, timeoutMs, 1),
-      jsonRPC(url, "tools/list", {}, timeoutMs, 2),
-      jsonRPC(url, "resources/read", { uri: PROGRESS_TEMPLATE_URI }, timeoutMs, 3)
-    ]);
-    const tools = Array.isArray(toolsList?.result?.tools) ? toolsList.result.tools : [];
+    const client = new StageMCPClient({ url, timeoutMs, clientName: "litsquare-stage-widget-preflight" });
+    const protocolVersion = await client.initialize();
+    const toolsList = await client.listTools();
+    const resourceRead = await client.readResource(PROGRESS_TEMPLATE_URI);
+    const tools = Array.isArray(toolsList?.tools) ? toolsList.tools : [];
     const toolNames = tools.map((tool) => tool?.name).filter((name) => typeof name === "string");
     const missingTools = WIDGET_TOOL_NAMES.filter((name) => !toolNames.includes(name));
     const progressTool = tools.find((tool) => tool?.name === "litsquare_stage_render_progress");
@@ -222,7 +205,7 @@ async function probeWidgetBridge(url, timeoutMs) {
     const hasOutputTemplate = progressMeta["openai/outputTemplate"] === PROGRESS_TEMPLATE_URI;
     const hasStandardResourceURI = progressMeta.ui?.resourceUri === PROGRESS_TEMPLATE_URI;
     const widgetAccessible = progressMeta["openai/widgetAccessible"] === true;
-    const resourceContents = Array.isArray(resourceRead?.result?.contents) ? resourceRead.result.contents : [];
+    const resourceContents = Array.isArray(resourceRead?.contents) ? resourceRead.contents : [];
     const widgetResource = resourceContents.find((content) => content?.uri === PROGRESS_TEMPLATE_URI);
     const resourceMeta = widgetResource?._meta ?? {};
     const hasCompactResourceMeta =
@@ -241,7 +224,7 @@ async function probeWidgetBridge(url, timeoutMs) {
 
     return {
       ok: Boolean(
-        initialize?.result?.protocolVersion === REQUIRED_MCP_PROTOCOL_VERSION &&
+        protocolVersion === REQUIRED_MCP_PROTOCOL_VERSION &&
         missingTools.length === 0 &&
         hasOutputTemplate &&
         hasStandardResourceURI &&
@@ -251,7 +234,7 @@ async function probeWidgetBridge(url, timeoutMs) {
       ),
       url,
       elapsedMs: Date.now() - startedAt,
-      protocolVersion: initialize?.result?.protocolVersion ?? null,
+      protocolVersion,
       toolNames,
       missingTools,
       progressToolMeta: progressMeta,
@@ -272,50 +255,6 @@ async function probeWidgetBridge(url, timeoutMs) {
       elapsedMs: Date.now() - startedAt,
       error: errorMessage(error)
     };
-  }
-}
-
-async function jsonRPC(url, method, params, timeoutMs, id) {
-  const requestParams = method === "initialize"
-    ? {
-        protocolVersion: REQUIRED_MCP_PROTOCOL_VERSION,
-        capabilities: {},
-        clientInfo: {
-          name: "litsquare-stage-codex-preflight",
-          title: "LitSquare Stage Codex Preflight",
-          version: "0.1.0"
-        },
-        ...params
-      }
-    : params;
-  const response = await fetchWithTimeout(url, {
-    method: "POST",
-    headers: {
-      "accept": "application/json, text/event-stream",
-      "content-type": "application/json",
-      "mcp-protocol-version": REQUIRED_MCP_PROTOCOL_VERSION
-    },
-    body: JSON.stringify({
-      jsonrpc: "2.0",
-      id,
-      method,
-      params: requestParams
-    })
-  }, timeoutMs);
-  const body = await response.json();
-  if (!response.ok || body.error) {
-    throw new Error(body.error?.message ?? `JSON-RPC ${method} failed with ${response.status}`);
-  }
-  return body;
-}
-
-async function fetchWithTimeout(url, init, timeoutMs) {
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), timeoutMs);
-  try {
-    return await fetch(url, { ...init, signal: controller.signal });
-  } finally {
-    clearTimeout(timer);
   }
 }
 

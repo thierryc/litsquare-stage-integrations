@@ -3,4 +3,9 @@ node_modules/
 dist/
 build/
 pnpm-lock.yaml
+!plugins/litsquare-stage-animation/templates/*/pnpm-lock.yaml
+!brand/exports/motion/pnpm-lock.yaml
 .codex-cache/
+
+__pycache__/
+*.pyc

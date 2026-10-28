@@ -1,6 +1,9 @@
 interface:
   display_name: "LitSquare Stage Quality Review"
-  short_description: "Review LitSquare Stage frames and artifacts for final visual and technical acceptance"
-  default_prompt: "Review this LitSquare Stage render for quality, responsive fit, and artifact correctness."
+  short_description: "Review Stage renders for final acceptance"
+  icon_small: "./assets/icon-small.png"
+  icon_large: "./assets/icon-large.svg"
+  brand_color: "#97005E"
+  default_prompt: "Use $litsquare-stage-quality-review to review this Stage render for final acceptance."
 policy:
   allow_implicit_invocation: true

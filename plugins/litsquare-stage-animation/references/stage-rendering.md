@@ -41,7 +41,7 @@ JSON-RPC MCP window feedback tool:
 
 Progress UI:
 
-- Canonical widget: app-served `ui://widget/litsquare-stage-render-progress-v3.html`
+- Canonical widget: app-served `ui://widget/litsquare-stage-render-progress-v4.html`
 - Widget source: macOS app `Sources/LitSquareStageRenderKit/Resources/RenderProgressWidget.html`
 - State contract: `references/render-progress-ui.md`
 - Claude Code activation and reload behavior: `references/claude-code-integration.md`
@@ -91,12 +91,7 @@ If any check fails, stop and show the mandatory-app message. Do not silently swi
 
 ## Native Window Feedback
 
-When the MCP window feedback tool is available, use the native app window to show render status to the user:
-
-- For still capture and quick image/frame inspection, call `litsquare_stage_set_render_window_state` with `visibility: "front"` and `compactMode: true`.
-- For video renders, long PNG sequences, or progress monitoring, call `litsquare_stage_set_render_window_state` with `visibility: "front"` and `compactMode: false`.
-- Use `floating: true` only when persistent visible status benefits the user; otherwise leave floating unchanged or false.
-- Hide or send back the window only after completion or when requested.
+The native renderer has one compact layout for every output type. Preserve the user's current visibility and focus during rendering. Show or bring the window forward only when the user asks for visible progress or frame inspection. Use `compactMode: true`; older `false` requests remain accepted and are normalized to compact mode. Set `floating: true` only when the user asks to keep the renderer on top. Rendering and audio cleanup must complete while the app is in the background.
 
 ## Scripts
 

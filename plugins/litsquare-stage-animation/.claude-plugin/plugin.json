@@ -1,6 +1,6 @@
 {
   "name": "litsquare-stage-animation",
-  "version": "0.9.5",
+  "version": "0.9.6",
   "description": "Create, refine, and render code-first LitSquare Stage animations through the macOS companion app.",
   "author": {
     "name": "Thierry Charbonnel"
@@ -8,6 +8,13 @@
   "homepage": "https://github.com/thierryc/litsquare-stage-integrations",
   "repository": "https://github.com/thierryc/litsquare-stage-integrations",
   "license": "MIT",
-  "keywords": ["litsquare-stage", "animation", "rendering", "video", "mcp", "macos"],
+  "keywords": [
+    "litsquare-stage",
+    "animation",
+    "rendering",
+    "video",
+    "mcp",
+    "macos"
+  ],
   "mcpServers": "./.mcp.json"
 }

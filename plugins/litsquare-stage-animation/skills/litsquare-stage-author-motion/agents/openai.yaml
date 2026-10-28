@@ -1,6 +1,9 @@
 interface:
   display_name: "LitSquare Stage Author Motion"
-  short_description: "Author deterministic CSS, JS, SVG, Canvas, WebGL, Three.js, or WebGPU motion"
-  default_prompt: "Add frame-derived motion to this LitSquare Stage project."
+  short_description: "Author deterministic motion for Stage projects"
+  icon_small: "./assets/icon-small.png"
+  icon_large: "./assets/icon-large.svg"
+  brand_color: "#97005E"
+  default_prompt: "Use $litsquare-stage-author-motion to add frame-derived motion to this LitSquare Stage project."
 policy:
   allow_implicit_invocation: true

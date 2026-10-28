@@ -1,6 +1,9 @@
 interface:
   display_name: "LitSquare Stage Figma Source"
-  short_description: "Convert Figma or visual design input into local LitSquare Stage video code"
-  default_prompt: "Turn this Figma frame into a local LitSquare Stage animation project."
+  short_description: "Turn visual sources into Stage animation code"
+  icon_small: "./assets/icon-small.png"
+  icon_large: "./assets/icon-large.svg"
+  brand_color: "#97005E"
+  default_prompt: "Use $litsquare-stage-figma-source to turn this visual source into a local Stage animation project."
 policy:
   allow_implicit_invocation: true

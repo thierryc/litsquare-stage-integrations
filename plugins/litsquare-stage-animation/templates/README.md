@@ -2,7 +2,7 @@
 
 These templates are starter projects for code-first LitSquare Stage video work. Each one is small, deterministic, and app-renderable.
 
-Template dependency paths point at the local runtime in this workspace. When copying a template outside this workspace, replace the `@litsquare/stage` file dependency with the published package or the correct local path.
+Every template installs the public `@litsquare/stage` runtime and includes a frozen pnpm lockfile. It can be copied outside this repository without editing dependency paths.
 
 ## Gallery
 
@@ -17,14 +17,12 @@ Template dependency paths point at the local runtime in this workspace. When cop
 | [Paper SVG Morph](paper-svg-morph/README.md) | Logo morphs, map shapes, icon transitions | Paper.js point interpolation and SVG output | 1920x1080 MP4 | Normalize and replace source paths |
 | [WebGPU Shader Loop](webgpu-shader-loop/README.md) | Shader backgrounds and GPU experiments | WebGPU with Canvas 2D fallback | 1920x1080 MP4 | Replace shader uniforms and fallback drawing |
 
-Preview assets: TODO. Add rendered stills or short MP4 clips for each template as the visual gallery matures.
-
 ## Standard Commands
 
 From any template directory:
 
 ```bash
-pnpm install
+pnpm install --frozen-lockfile
 pnpm dev
 pnpm build
 ```

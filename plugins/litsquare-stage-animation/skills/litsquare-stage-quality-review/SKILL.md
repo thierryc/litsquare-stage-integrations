@@ -7,6 +7,8 @@ description: Final acceptance review for LitSquare Stage animation projects and 
 
 Use after implementation and after every important render. This skill decides whether the project is ready to hand off or needs the smallest next fix.
 
+Use host MCP tools for app-backed checks, or the shipped shared-client scripts when direct tools are unavailable. Never construct a raw `{tool,payload}` request.
+
 ## Required Checks
 
 Read `references/qa-checklist.md`, then verify:

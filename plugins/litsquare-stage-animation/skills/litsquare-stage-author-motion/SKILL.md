@@ -7,16 +7,19 @@ description: Author or revise LitSquare Stage scenes and frame-derived motion af
 
 Use after `litsquare-stage-init-project` has created or verified the project contract.
 
+When app access is needed, prefer the host's MCP tools. If they are unavailable, use the shipped scripts, which share one standards-based MCP client; never construct a raw `{tool,payload}` request.
+
 ## Required Workflow
 
 1. Inspect existing scene code and `stage.config.json`.
 2. Read `references/motion-system.md`.
 3. Read only the relevant section of `references/runner-surfaces.md` for the chosen surface.
-4. Choose one primary surface per scene unless the user explicitly wants mixed media.
-5. Compute visible state from `ctx.frame`, `ctx.time`, `ctx.fps`, `ctx.durationFrames`, `ctx.width`, and `ctx.height`.
-6. Use `prepareExport` for fonts, images, data snapshots, audio readiness, and GPU resources.
-7. Preserve fractional-frame correctness for motion blur.
-8. Build and run `validate-stage-project.mjs` when feasible.
+4. When the task includes audio or audiovisual synchronization, read `references/audio-sync.md`.
+5. Choose one primary surface per scene unless the user explicitly wants mixed media.
+6. Compute visible state from `ctx.frame`, `ctx.time`, `ctx.fps`, `ctx.durationFrames`, `ctx.width`, and `ctx.height`.
+7. Use `prepareExport` for fonts, images, data snapshots, audio readiness, and GPU resources.
+8. Preserve fractional-frame correctness for motion blur and audio endpoints.
+9. Build and run `validate-stage-project.mjs` when feasible.
 
 ## Avoid
 

@@ -28,7 +28,14 @@ codex plugin marketplace add thierryc/litsquare-stage-integrations
 codex plugin add litsquare-stage-animation@litsquare-stage
 ```
 
-Start a new Codex task after installation.
+Start a new Codex task after installation. To refresh an existing installation:
+
+```bash
+codex plugin marketplace upgrade litsquare-stage
+codex plugin add litsquare-stage-animation@litsquare-stage
+```
+
+Verify the reported version with `codex plugin list --json`.
 
 ## Install in Claude Code
 
@@ -39,11 +46,17 @@ claude plugin install litsquare-stage-animation@litsquare-stage --scope user
 
 Run `/reload-plugins` inside Claude Code after installation.
 
+## Install in Cursor
+
+Use **Add Stage** in the native app's Connections tab. It installs all eight bundled skills and the loopback MCP connection under your user account. Reload Cursor and start a new chat in a project folder. Use **Update Stage** when the app offers a newer bundled version.
+
 ## Runtime Requirement
 
-This first plugin version requires the LitSquare Stage macOS app. The bundled skills must verify that the session is running on macOS and that the app is installed before attempting to render.
+This release requires the LitSquare Stage macOS app. The bundled skills must verify that the session is running on macOS and that the app is installed before attempting to render.
 
 Preflight treats the verified native `litsquare-stage-macos` service as authoritative. A running development build outside `/Applications` may pass with a `debug_app_unregistered` warning; unavailable or incompatible services return a precise remediation message.
+
+Custom project authoring requires Node.js 22 or later and pnpm 10.29.2. When pnpm is unavailable, use `npx --yes pnpm@10.29.2` for project commands. The native app's local sample runs without Node.js.
 
 ## Future Service Path
 
@@ -52,18 +65,29 @@ The private `litsquare-stage-chromium` renderer defines the same render-oriented
 ## Development Checks
 
 ```bash
-python3 /Users/thierryc/.codex/skills/.system/plugin-creator/scripts/validate_plugin.py plugins/litsquare-stage-animation
+python3 -m pip install -r release/requirements-validation.txt
+python3 release/scripts/validate_plugin.py plugins/litsquare-stage-animation
+python3 -m unittest discover -s tests -p 'test_*.py'
 claude plugin validate .
 node --check plugins/litsquare-stage-animation/scripts/check-stage-app.mjs
 node --check plugins/litsquare-stage-animation/scripts/render-stage-project.mjs
 node --check plugins/litsquare-stage-animation/scripts/get-render-progress-state.mjs
 node --check plugins/litsquare-stage-animation/scripts/make-render-progress-preview-url.mjs
+node --check plugins/litsquare-stage-animation/scripts/stage-runtime-release.mjs
+node --check plugins/litsquare-stage-animation/scripts/sync-template-runtime.mjs
+node --check plugins/litsquare-stage-animation/scripts/check-template-portability.mjs
 node --check plugins/litsquare-stage-animation/scripts/test-anotherplanet-smoke.mjs
 node --test tests/*.test.mjs
 node plugins/litsquare-stage-animation/scripts/make-render-progress-preview-url.mjs
 ```
 
-The preview URL command fetches the canonical compact widget and current progress state from the running LitSquare Stage app. In-conversation rendering requires the app JSON-RPC MCP bridge to expose `litsquare_stage_start_video_render`, `litsquare_stage_start_sequence_render`, `litsquare_stage_render_progress`, and `ui://widget/litsquare-stage-render-progress-v3.html` through standard `_meta.ui.resourceUri` plus the `openai/outputTemplate` compatibility alias.
+Before publishing the plugin, run the isolated template gate:
+
+```bash
+node plugins/litsquare-stage-animation/scripts/check-template-portability.mjs
+```
+
+The preview URL command fetches the canonical compact widget and current progress state from the running LitSquare Stage app. In-conversation rendering requires the app JSON-RPC MCP bridge to expose `litsquare_stage_start_video_render`, `litsquare_stage_start_sequence_render`, `litsquare_stage_render_progress`, the private app action `litsquare_stage_open_render_artifact`, and `ui://widget/litsquare-stage-render-progress-v4.html` through standard `_meta.ui.resourceUri` plus the `openai/outputTemplate` compatibility alias.
 
 The render progress UI is served as an MCP widget resource by the LitSquare Stage macOS app. It is not installed through a ChatGPT app Connect redirect.
 
@@ -80,5 +104,5 @@ The smoke script validates app readiness, builds the stage with `pnpm build`, ca
 For a local debug app bundle, pass the explicit bundle path:
 
 ```bash
-node plugins/litsquare-stage-animation/scripts/test-anotherplanet-smoke.mjs --app-path /private/tmp/LitSquare Stage Debug.app
+node plugins/litsquare-stage-animation/scripts/test-anotherplanet-smoke.mjs --app-path "/private/tmp/LitSquare Stage Debug.app"
 ```

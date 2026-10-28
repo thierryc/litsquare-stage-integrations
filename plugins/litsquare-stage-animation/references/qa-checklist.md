@@ -27,7 +27,9 @@
 - Duration equals `(endFrame - startFrame + 1) / fps`.
 - FPS matches config.
 - Motion blur looks intentional and does not smear UI text excessively.
-- Audio is present only when requested.
+- Audio is present when requested and absent otherwise.
+- Audio-enabled outputs have both video and audio tracks; verify duration, sample rate, and channel count.
+- Short cues end on the requested visual event rather than starting there.
 - Loop start/end is clean for looping videos.
 
 ## High-Resolution Checks

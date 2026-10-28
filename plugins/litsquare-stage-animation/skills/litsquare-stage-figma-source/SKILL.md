@@ -7,6 +7,8 @@ description: Convert Figma frames, screenshots, design-system inputs, or exporte
 
 Use when Figma or an exported design is the source of the video.
 
+Use host MCP tools for Stage app operations, or the shipped shared-client scripts when direct tools are unavailable. Never construct a raw `{tool,payload}` request.
+
 ## Workflow
 
 1. Inspect the Figma frame, screenshot, or exported assets.

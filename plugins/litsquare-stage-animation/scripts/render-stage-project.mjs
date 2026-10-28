@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import path from "node:path";
 import { pathToFileURL } from "node:url";
+import { StageMCPClient, probeHealth } from "./stage-mcp-client.mjs";
 
 const DEFAULT_HEALTH_URL = "http://127.0.0.1:7460/healthz";
 const DEFAULT_MCP_URL = "http://127.0.0.1:7460/mcp";
@@ -11,6 +12,11 @@ const args = parseArgs(process.argv.slice(2));
 const mcpURL = String(args.mcpUrl ?? process.env.STAGE_MCP_URL ?? DEFAULT_MCP_URL);
 const healthURL = String(args.healthUrl ?? process.env.STAGE_HEALTH_URL ?? DEFAULT_HEALTH_URL);
 const timeouts = resolveTimeouts(args);
+const mcpClient = new StageMCPClient({
+  url: mcpURL,
+  timeoutMs: timeouts.operationTimeoutMs,
+  clientName: "litsquare-stage-render-script"
+});
 
 if (import.meta.url === pathToFileURL(process.argv[1]).href) {
   await main();
@@ -62,13 +68,13 @@ async function assertAppReady(healthURL, mcpURL, timeoutMs) {
     throw new Error("LitSquare Stage native rendering requires macOS in this plugin version.");
   }
 
-  const health = await probe(healthURL, timeoutMs);
+  const health = await probeHealth(healthURL, timeoutMs);
   if (!health.ok) {
     throw new Error(`${MANDATORY_MESSAGE} Health check failed: ${health.error ?? health.status}`);
   }
 
-  const mcp = await probe(mcpURL, timeoutMs, true);
-  if (!mcp.ok || !Array.isArray(mcp.body?.tools) || !mcp.body.tools.includes("render_video")) {
+  const tools = await mcpClient.listTools();
+  if (!Array.isArray(tools?.tools) || !tools.tools.some((tool) => tool?.name === "litsquare_stage_start_video_render")) {
     throw new Error(`${MANDATORY_MESSAGE} MCP endpoint is not ready.`);
   }
 }
@@ -76,8 +82,10 @@ async function assertAppReady(healthURL, mcpURL, timeoutMs) {
 async function renderByKind(kind, projectRoot, outputPath) {
   switch (kind) {
     case "frame": {
-      await callTool(mcpURL, "load_project", { projectRoot }, timeouts.operationTimeoutMs);
-      const data = await callTool(mcpURL, "capture_frame", {
+      const data = await callMCPTool(mcpURL, "litsquare_stage_export_still", {
+        sourceType: "stageProject",
+        projectRoot,
+        format: "png",
         frame: integerArg(args.frame, 0),
         outputPath,
         overwrite: Boolean(args.overwrite)
@@ -138,66 +146,10 @@ async function waitForProgress(initialState, waitTimeoutSeconds) {
 }
 
 async function callMCPTool(url, name, argumentsValue, timeoutMs) {
-  const response = await fetchWithTimeout(url, {
-    method: "POST",
-    headers: {
-      "accept": "application/json, text/event-stream",
-      "content-type": "application/json",
-      "mcp-protocol-version": "2025-06-18"
-    },
-    body: JSON.stringify({
-      jsonrpc: "2.0",
-      id: `${Date.now()}-${Math.random()}`,
-      method: "tools/call",
-      params: { name, arguments: removeUndefined(argumentsValue) }
-    })
-  }, timeoutMs);
-  const body = await response.json();
-  if (!response.ok || body.error || body.result?.isError) {
-    throw new Error(body.error?.message ?? body.result?.content?.[0]?.text ?? `LitSquare Stage MCP tool ${name} failed.`);
+  if (url !== mcpClient.url) {
+    throw new Error(`Unexpected MCP endpoint ${url}.`);
   }
-  return body.result?.structuredContent ?? body.result;
-}
-
-async function callTool(url, tool, payload, timeoutMs) {
-  const response = await fetchWithTimeout(url, {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify({ tool, payload: removeUndefined(payload) })
-  }, timeoutMs);
-  const body = await response.json();
-  if (!body.ok) {
-    throw new Error(body.error ?? `LitSquare Stage tool ${tool} failed.`);
-  }
-  return body.data;
-}
-
-async function probe(url, timeoutMs, parseJson = false) {
-  try {
-    const response = await fetchWithTimeout(url, { method: "GET" }, timeoutMs);
-    const text = await response.text();
-    return {
-      ok: response.ok,
-      status: response.status,
-      body: parseJson ? JSON.parse(text) : text
-    };
-  } catch (error) {
-    return {
-      ok: false,
-      status: null,
-      error: errorMessage(error)
-    };
-  }
-}
-
-async function fetchWithTimeout(url, init, timeoutMs) {
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), timeoutMs);
-  try {
-    return await fetch(url, { ...init, signal: controller.signal });
-  } finally {
-    clearTimeout(timer);
-  }
+  return await mcpClient.callTool(name, argumentsValue, timeoutMs);
 }
 
 function parseArgs(argv) {
@@ -265,10 +217,6 @@ export function summarizeProgressState(state) {
     preview: summarizePreview(state.preview),
     previews: Array.isArray(state.previews) ? state.previews.map(summarizePreview) : state.previews
   };
-}
-
-function removeUndefined(value) {
-  return Object.fromEntries(Object.entries(value).filter(([, entry]) => entry !== undefined));
 }
 
 function errorMessage(error) {

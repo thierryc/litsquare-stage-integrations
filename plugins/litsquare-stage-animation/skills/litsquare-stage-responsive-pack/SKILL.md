@@ -7,6 +7,8 @@ description: Adapt a LitSquare Stage animation across multiple output formats an
 
 Use when one animation must render cleanly across more than one size or aspect ratio.
 
+Use host MCP tools for app operations, or the shipped shared-client scripts when direct tools are unavailable. Never construct a raw `{tool,payload}` request.
+
 ## Required Workflow
 
 1. Read `references/format-matrix.md` and `references/responsive-fluid-html.md`.

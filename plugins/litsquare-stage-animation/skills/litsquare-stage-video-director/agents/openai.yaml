@@ -1,6 +1,9 @@
 interface:
   display_name: "LitSquare Stage Video Director"
-  short_description: "Route LitSquare Stage video work to the right creation, render, and review skills"
-  default_prompt: "Create, render, or review a LitSquare Stage video using the correct workflow."
+  short_description: "Route Stage work through creation and review"
+  icon_small: "./assets/icon-small.png"
+  icon_large: "./assets/icon-large.svg"
+  brand_color: "#97005E"
+  default_prompt: "Use $litsquare-stage-video-director to route this Stage video through the correct workflow."
 policy:
   allow_implicit_invocation: true

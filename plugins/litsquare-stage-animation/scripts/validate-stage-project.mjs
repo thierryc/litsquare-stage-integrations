@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { access, readFile } from "node:fs/promises";
+import { access, readFile, readdir } from "node:fs/promises";
 import path from "node:path";
 
 const args = parseArgs(process.argv.slice(2));
@@ -56,6 +56,8 @@ async function validateProject(project) {
 
   const main = await readText(files.main);
   if (main) validateMain(main, errors, warnings);
+  const projectSource = await readSourceTree(path.join(project, "src"));
+  if (config && projectSource) validateAudio(config, projectSource, warnings);
 
   const styles = await readText(files.styles);
   if (styles) validateStyles(styles, warnings);
@@ -95,6 +97,21 @@ function validateConfig(config, errors, warnings) {
   }
   if (blur.enabled && Number(blur.shutterAngle) !== 180) {
     warnings.push("Non-180 shutterAngle is valid but should be intentional.");
+  }
+  if (render.audioEnabled !== undefined && typeof render.audioEnabled !== "boolean") {
+    errors.push("render.audioEnabled must be boolean when provided.");
+  }
+}
+
+function validateAudio(config, source, warnings) {
+  const usesAudio = /(AudioContext|OfflineAudioContext|renderAudio|\.(wav|mp3|m4a|aac)\b)/i.test(source);
+  if (usesAudio && config.render?.audioEnabled !== true) {
+    warnings.push("Project appears to use audio, but stage.config.json render.audioEnabled is not true; native video renders will be silent.");
+  }
+  const requiresStatus200 = /\.status\s*!==?\s*200/.test(source);
+  const acceptsLocalStatus0 = /\.status\s*===?\s*0/.test(source);
+  if (usesAudio && requiresStatus200 && !acceptsLocalStatus0) {
+    warnings.push("Local file: audio loads can complete with status 0; accept it only for file: URLs with a non-empty response.");
   }
 }
 
@@ -144,6 +161,20 @@ async function readJSON(filePath, errors, project) {
 async function readText(filePath) {
   try {
     return await readFile(filePath, "utf8");
+  } catch {
+    return "";
+  }
+}
+
+async function readSourceTree(directory) {
+  try {
+    const entries = await readdir(directory, { withFileTypes: true });
+    const sources = await Promise.all(entries.map(async (entry) => {
+      const entryPath = path.join(directory, entry.name);
+      if (entry.isDirectory()) return readSourceTree(entryPath);
+      return /\.(c|m)?(j|t)sx?$/.test(entry.name) ? readText(entryPath) : "";
+    }));
+    return sources.filter(Boolean).join("\n");
   } catch {
     return "";
   }

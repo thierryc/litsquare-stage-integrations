@@ -7,6 +7,8 @@ description: Router-only workflow for LitSquare Stage video work. Use when the u
 
 Route LitSquare Stage Animation requests. Do not implement focused workflow details here.
 
+All routed app operations use host MCP tools or the shipped shared-client scripts. Do not route agents to handwritten HTTP or raw `{tool,payload}` calls.
+
 ## Route By Goal
 
 - New project, starter, setup, template, or "make a LitSquare Stage video": `litsquare-stage-init-project`.
